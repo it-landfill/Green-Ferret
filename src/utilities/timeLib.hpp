@@ -1,9 +1,10 @@
 /**
- * @file timeLib.hpp
- * @author Benetton Alessandro (aleben98@gmail.com)
+ * @file timeLib.cpp
+ * @author Alessandro Benetton (aleben98@gmail.com)
+ * @author Crespan Lorenzo (lorenzo.crespan@gmail.com)
  * @brief
  * @version 0.1
- * @date 2023-03-15
+ * @date 2023-05-06
  *
  * @copyright Copyright (c) 2023
  *
@@ -11,12 +12,12 @@
 
 #ifndef TIMELIB_H
 #define TIMELIB_H
-/**
- * @brief Length of the timestamp string.
- *
- */
-#define TIMESTAMP_LENGTH 20
+#include <Arduino.h>
+#include <ezTime.h>
 
+void   setupTime();
+void   syncTimeServer();
+bool checkTimeServer();
 /**
  * @brief Save the timestamp string in the timestamp parameter.
  * Timestamp string is defined as:

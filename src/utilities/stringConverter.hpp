@@ -1,5 +1,17 @@
-#ifndef __STRINGCONVERTER_HPP__
-#define __STRINGCONVERTER_HPP__
+/**
+ * @file timeLib.cpp
+ * @author Alessandro Benetton (aleben98@gmail.com)
+ * @author Crespan Lorenzo (lorenzo.crespan@gmail.com)
+ * @brief 
+ * @version 0.1
+ * @date 2023-05-06
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
+#ifndef STRINGCONVERTER_HPP
+#define STRINGCONVERTER_HPP
 #include <Arduino.h>
 /**
  * Converts a String to a const char array.

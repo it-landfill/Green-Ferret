@@ -1,14 +1,14 @@
 /**
- * @file loggerLib.cpp
- * @author Benetton Alessandro (aleben98@gmail.com)
- * @brief
+ * @file timeLib.cpp
+ * @author Alessandro Benetton (aleben98@gmail.com)
+ * @author Crespan Lorenzo (lorenzo.crespan@gmail.com)
+ * @brief 
  * @version 0.1
- * @date 2023-03-15
- *
+ * @date 2023-05-06
+ * 
  * @copyright Copyright (c) 2023
- *
+ * 
  */
-
 
 #include "../timeLib.hpp"
 #include "../loggerLib.hpp"
@@ -32,80 +32,76 @@ void logMessagef(const char* fmt, ...){
 	free(message);
 }
 
-void logMessage(const char* level, const char *message) {
-	// Get timestamp
-	char* timestamp = NULL;
+void logMessage(const char* level, const char* module, const char *message) {
+
 	#ifdef TIMELIB_H
-	timestamp = getTimestamp();
-	logMessagef("[%s] [%s] %s\n", timestamp, level, message);
-	// Free memory
-	free(timestamp);
+	logMessagef("[%s] [%s] [%s] %s\n", getTimestamp(), level, module, message);
 	#else
 	logMessage("[%s] %s\n", level, message);
 	#endif
 }
 
-void logInfo(const char *message) {
-	logMessage(INFO, message);
+void logInfo(const char *module, const char *message) {
+	logMessage(INFO, module, message);
 }
 
-void logInfof(const char *fmt, ...) {
+void logInfof(const char *module, const char *fmt, ...) {
 	va_list arg;
 	va_start(arg, fmt);
 	char* message = varargToCharArr(fmt, arg);
 	va_end(arg);
-	logMessage(INFO, message);
+	logMessage(INFO, module, message);
 	free(message);
 }
 
-void logError(const char *message){
-	logMessage(ERROR, message);
+void logError(const char *module, const char *message){
+	logMessage(ERROR, module, message);
 }
 
-void logErrorf(const char *fmt, ...) {
+void logErrorf(const char *module, const char *fmt, ...) {
 	va_list arg;
 	va_start(arg, fmt);
 	char* message = varargToCharArr(fmt, arg);
 	va_end(arg);
-	logMessage(ERROR, message);
+	logMessage(ERROR, module, message);
 	free(message);
 }
 
-void logWarning(const char *message){
-	logMessage(WARNING, message);
+void logWarning(const char *module, const char *message){
+	logMessage(WARNING, module, message);
 }
 
-void logWarningf(const char *fmt, ...) {
+void logWarningf(const char *module, const char *fmt, ...) {
 	va_list arg;
 	va_start(arg, fmt);
 	char* message = varargToCharArr(fmt, arg);
 	va_end(arg);
-	logMessage(INFO, message);
+	logMessage(INFO, module, message);
 	free(message);
 }
 
-void logDebug(const char *message){
-	logMessage(DEBUG, message);
+void logDebug(const char *module, const char *message){
+	logMessage(DEBUG, module, message);
 }
 
-void logDebugf(const char *fmt, ...) {
+void logDebugf(const char *module, const char *fmt, ...) {
 	va_list arg;
 	va_start(arg, fmt);
 	char* message = varargToCharArr(fmt, arg);
 	va_end(arg);
-	logMessage(DEBUG, message);
+	logMessage(DEBUG, module, message);
 	free(message);
 }
 
-void logVerbose(const char *message){
-	logMessage(VERBOSE, message);
+void logVerbose(const char *module, const char *message){
+	logMessage(VERBOSE, module, message);
 }
 
-void logVerbosef(const char *fmt, ...) {
+void logVerbosef(const char *module, const char *fmt, ...) {
 	va_list arg;
 	va_start(arg, fmt);
 	char* message = varargToCharArr(fmt, arg);
 	va_end(arg);
-	logMessage(VERBOSE, message);
+	logMessage(VERBOSE, module, message);
 	free(message);
 }

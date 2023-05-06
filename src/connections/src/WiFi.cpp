@@ -26,7 +26,7 @@ bool wifiSetup(bool rebootOnFail){
 		WiFiMulti.addAP(WiFiCredentials[i][0], WiFiCredentials[i][1]);
 	}
 
-	logInfo("Connecting to WiFi");
+	logInfo("WiFi", "Connecting to WiFi");
 
 	int i = 0;
 	while(WiFiMulti.run() != WL_CONNECTED && i++ < 60) {
@@ -34,15 +34,15 @@ bool wifiSetup(bool rebootOnFail){
 	}
 
 	if (WiFi.status() != WL_CONNECTED) {
-		logError("WiFi connection failed");
+		logError("WiFi", "WiFi connection failed");
 		if (rebootOnFail) {
-			logInfo("Rebooting");
+			logInfo("WiFi", "Rebooting");
 			ESP.restart();
 		}
 		return false;
 	}
 
-	logInfof("WiFi connected. IP address: %s", WiFi.localIP().toString().c_str());
+	logInfof("WiFi", "WiFi connected. IP address: %s", WiFi.localIP().toString().c_str());
 	return true;
 }
 
