@@ -1,9 +1,10 @@
 #include <Arduino.h>
-
-void setup() {
-  // put your setup code here, to run once:
+#include "connections/WiFi.hpp"
+void setup(){
+	Serial.begin(115200);
+	wifiSetup(true);
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
+void loop(){
+	delay(100000);
 }

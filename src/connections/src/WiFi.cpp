@@ -16,13 +16,15 @@
 
 #include "../WiFi.hpp"
 #include "../../utilities/loggerLib.hpp"
-
+#include "../secrets.hpp"
 WiFiMulti WiFiMulti;
 
 bool wifiSetup(bool rebootOnFail){
 
-	// We start by connecting to a WiFi network
-	WiFiMulti.addAP("SSID", "passpasspass");
+	// We start by adding all the known wifi
+	for (int i = 0; i < WiFiCredentialNum; i++) {
+		WiFiMulti.addAP(WiFiCredentials[i][0], WiFiCredentials[i][1]);
+	}
 
 	logInfo("Connecting to WiFi");
 
