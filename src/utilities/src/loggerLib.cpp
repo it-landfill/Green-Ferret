@@ -34,7 +34,7 @@ void logMessagef(const char* fmt, ...){
 
 void logMessage(const char* level, const char* module, const char *message) {
 
-	#ifdef TIMELIB_H
+	#ifdef TIMELIB_HPP
 	logMessagef("[%s] [%s] [%s] %s\n", getTimestamp(), level, module, message);
 	#else
 	logMessage("[%s] %s\n", level, message);

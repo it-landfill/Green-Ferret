@@ -10,8 +10,8 @@
  * 
  */
 
-#ifndef LOGGERLIB_H
-#define LOGGERLIB_H
+#ifndef LOGGERLIB_HPP
+#define LOGGERLIB_HPP
 void logInfo(const char *module, const char *message);
 void logError(const char *module, const char *message);
 void logWarning(const char *module, const char *message);

@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef TIMELIB_H
-#define TIMELIB_H
+#ifndef TIMELIB_HPP
+#define TIMELIB_HPP
 #include <Arduino.h>
 #include <ezTime.h>
 
