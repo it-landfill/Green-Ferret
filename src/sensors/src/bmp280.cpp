@@ -12,23 +12,18 @@
 
 #include "Arduino.h"
 
-#include <Wire.h>
-#include <SPI.h>
 #include <Adafruit_BMP280.h>
 
 #include "../../utilities/loggerLib.hpp"
 
-#define BMP_SCK (13)
-#define BMP_MISO (12)
-#define BMP_MOSI (11)
-#define BMP_CS (10)
-
-Adafruit_BMP280 bmp; // I2C
-// Adafruit_BMP280 bmp(BMP_CS); // hardware SPI
-// Adafruit_BMP280 bmp(BMP_CS, BMP_MOSI, BMP_MISO, BMP_SCK);
+Adafruit_BMP280 bmp;
+#ifdef BMP280_CHIPID 
+#undef BMP280_CHIPID
+#endif
+#define BMP280_CHIPID 0x58
 
 bool bmp280Setup() {
-    if (!bmp.begin()) {
+    if (!bmp.begin(BMP280_ADDRESS_ALT, BMP280_CHIPID)) {
         logError("BMP280", "Could not find a valid BMP280 sensor, check wiring!");
         return false;
     }
