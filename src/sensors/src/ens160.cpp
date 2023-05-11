@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include <DFRobot_ENS160.h>
 
 #include "../ens160.hpp"
 #include "../../utilities/loggerLib.hpp"

@@ -1,6 +1,7 @@
 #ifndef ENS160_HPP
 #define ENS160_HPP
-#include "Arduino.h"
+#include <Arduino.h>
+#include <DFRobot_ENS160.h>
 
 /**
  * @brief  Initial configuration for ENS160 sensor
@@ -44,6 +45,7 @@ uint8_t ens160GetStatus();
 /**
  * @brief Get the Air Quality Index
  * @return uint8_t The AQI:
+ * - 0 Initialization in progress
  * - 1 Excellent
  * - 2 Good
  * - 3 Moderate
