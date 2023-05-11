@@ -4,5 +4,9 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"doxdocgen.generic.authorEmail": "aleben98@gmail.com",
+		"doxdocgen.generic.authorName": "Alessandro Benetton",
+		"doxdocgen.generic.authorTag": "@author {author} ({email}) @author Crespan Lorenzo (lorenzo.crespan@gmail.com)"
+	}
 }
