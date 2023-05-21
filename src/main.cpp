@@ -2,6 +2,7 @@
 #include <Wire.h>
 
 #include "connections/WiFi.hpp"
+#include "connections/MQTT.hpp"
 #include "utilities/loggerLib.hpp"
 #include "utilities/timeLib.hpp"
 
@@ -15,9 +16,15 @@
 void setup(){
 	Serial.begin(115200);
 	logInfo("MAIN", "Starting Setup");
-	// wifiSetup(true);
+	wifiSetup(true);
 	// setupTime();
 	// syncTimeServer();
+	
+	// Connect to the remote broker and subscribe to the topic
+    connectMQTT(); 
+    subscribeTopicMQTT(genConfigChannel());
+	// Set the data channel
+	setDataChannel();
 
 	// Sensor setup
 	Wire.begin(SDA_PIN, SCL_PIN);
@@ -29,5 +36,9 @@ void setup(){
 }
 
 void loop(){
-	delay(1000);
+	delay(5000);
+	float temperature = random(20, 30);
+	char temperatureChar[10];
+	dtostrf(temperature, 4, 2, temperatureChar);
+	Serial.printf("Temperature pubblish result: %d \n", publishData(strdup("Cresp/data"), temperatureChar));
 }
