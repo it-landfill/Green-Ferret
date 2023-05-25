@@ -13,34 +13,43 @@
 #include "Arduino.h"
 #include "WiFi.h"
 #include <PubSubClient.h>
+#include <ArduinoJson.h>
+
+#include "../../utilities/loggerLib.hpp"
+
+#define MODULE_NAME "MQTT"
 
 const char broker[] = "test.mosquitto.org";
 int port = 1883;
 const char clientID[] = "cresp";
 const char *topicPushData = "CFG/Data";
 
-PubSubClient clientMQTT;
 WiFiClient client;
+PubSubClient clientMQTT(client);
+
+void callback(char* topic, byte* payload, unsigned int length) {
+	logDebug(MODULE_NAME, "Message arrived");
+	StaticJsonDocument<200> doc;
+	deserializeJson(doc, payload);
+	int communicationMode = doc["CommunicationMode"];
+	logDebugf(MODULE_NAME, "Communication mode: %d", communicationMode);
+}
 
 void connectMQTT() {
-    client = WiFiClient();
-    clientMQTT.setClient(client);
-    Serial.printf("Connecting to MQTT broker \n");
-    clientMQTT.setServer(broker, port);
-    if (clientMQTT.connect(clientID)) Serial.printf("Connected to MQTT broker \n");
-    else {
-        Serial.printf("Connection to MQTT broker failed");
-        Serial.printf("Error code: %d \n", clientMQTT.state());
-    }
+    logDebug(MODULE_NAME, "Connecting to MQTT broker");
+	client = WiFiClient();
+	clientMQTT.setServer(broker, port);
+	clientMQTT.setCallback(callback);
+    if (clientMQTT.connect(clientID)) logDebug(MODULE_NAME, "Connected to MQTT broker");
+    else logError(MODULE_NAME, "MQTT Broker not available");
 }
 
 void subscribeTopicMQTT(char *topic) {
-	Serial.printf("Subscribing to topic %s \n", topic);
     clientMQTT.subscribe(topic);
-	Serial.printf("Subscribed to topic %s \n", topic);
+	logDebug(MODULE_NAME, "Subscribed to config topic");
 }
 
-bool publishData(char *topic, char *payload) {
+bool publishData(char *payload) {
     bool connected = clientMQTT.connected();
     if (!connected) connected = clientMQTT.connect(clientID);
     if (connected) {

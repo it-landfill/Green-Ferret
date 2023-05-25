@@ -40,5 +40,5 @@ void loop(){
 	float temperature = random(20, 30);
 	char temperatureChar[10];
 	dtostrf(temperature, 4, 2, temperatureChar);
-	Serial.printf("Temperature pubblish result: %d \n", publishData(strdup("Cresp/data"), temperatureChar));
+	Serial.printf("Temperature pubblish result: %d \n", publishData(temperatureChar));
 }

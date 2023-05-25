@@ -14,7 +14,7 @@
 #define MQTT_HPP
 void connectMQTT();
 void subscribeTopicMQTT(char *topic);
-bool publishData(char *topic, char *payload);
+bool publishData(char *payload);
 char *getEsp32ID();
 char* genConfigChannel();
 void setDataChannel();
