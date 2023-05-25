@@ -37,8 +37,13 @@ void setup(){
 
 void loop(){
 	delay(5000);
-	float temperature = random(20, 30);
-	char temperatureChar[10];
-	dtostrf(temperature, 4, 2, temperatureChar);
-	Serial.printf("Temperature pubblish result: %d \n", publishData(temperatureChar));
+	float temperature = random(20, 25);
+	float humidity = random(50, 60);
+	float pressure = random(1000, 1010);
+	float x = random(11, 12);
+	float y = random(44, 45);
+	char *jsonMsg = setJsonSensorData(temperature, humidity, pressure, x, y);
+	// Serial.printf("Json to be pubblish: %s\n", jsonMsg);
+	// publishData(jsonMsg);
+	// Serial.printf("Json to be pubblish: \n", publishData(jsonMsg));
 }

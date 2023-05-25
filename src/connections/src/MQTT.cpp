@@ -19,10 +19,12 @@
 
 #define MODULE_NAME "MQTT"
 
-const char broker[] = "test.mosquitto.org";
+const char broker[] = "pi3aleben";
+const char user[] = "IoT";
+const char psw[] = "iot2023";
 int port = 1883;
 const char clientID[] = "cresp";
-const char *topicPushData = "CFG/Data";
+const char *topicPushData = "sensors/undefined";
 
 WiFiClient client;
 PubSubClient clientMQTT(client);
@@ -38,9 +40,10 @@ void callback(char* topic, byte* payload, unsigned int length) {
 void connectMQTT() {
     logDebug(MODULE_NAME, "Connecting to MQTT broker");
 	client = WiFiClient();
+	// Authentification
 	clientMQTT.setServer(broker, port);
 	clientMQTT.setCallback(callback);
-    if (clientMQTT.connect(clientID)) logDebug(MODULE_NAME, "Connected to MQTT broker");
+    if (clientMQTT.connect(clientID, user, psw)) logDebug(MODULE_NAME, "Connected to MQTT broker");
     else logError(MODULE_NAME, "MQTT Broker not available");
 }
 
@@ -53,6 +56,7 @@ bool publishData(char *payload) {
     bool connected = clientMQTT.connected();
     if (!connected) connected = clientMQTT.connect(clientID);
     if (connected) {
+		Serial.println(payload);
         bool result = clientMQTT.publish(topicPushData, payload);
         clientMQTT.loop();
         return result;
@@ -76,6 +80,21 @@ char* genConfigChannel() {
 
 void setDataChannel() {
 	char *channel = new char[30];
-	sprintf(channel, "CFG/%s/Data", getEsp32ID());
+	sprintf(channel, "sensors/%s", getEsp32ID());
 	topicPushData = channel;
+}
+
+char* setJsonSensorData(float temperature, float humidity, float pressure, float x, float y) {
+	StaticJsonDocument<200> doc;
+	doc["Temperature"] = temperature;
+	doc["Humidity"] = humidity;
+	doc["Pressure"] = pressure;
+	doc["X"] = x;
+	doc["Y"] = y;
+	char json[200];
+	serializeJson(doc, json);
+	// Print the result to the serial monitor
+	Serial.println(json);
+	publishData(json);
+	return json;
 }
