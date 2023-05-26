@@ -109,6 +109,7 @@ bool mqttConnect() {
 			return false;
 		}
 	}
+	return true;
 }
 
 bool mqttPublishSensorData(char *payload) {
