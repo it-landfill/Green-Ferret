@@ -10,7 +10,6 @@
  * 
  */
 
-#include "../timeLib.hpp"
 #include "../loggerLib.hpp"
 #include "../stringConverter.hpp"
 
@@ -22,23 +21,8 @@
 #define DEBUG "D"
 #define VERBOSE "V"
 
-void logMessagef(const char* fmt, ...){
-	va_list arg;
-	va_start(arg, fmt);
-	char* message = varargToCharArr(fmt, arg);
-	va_end(arg);
-
-	Serial.print(message);
-	free(message);
-}
-
 void logMessage(const char* level, const char* module, const char *message) {
-
-	#ifdef TIMELIB_HPP
-	logMessagef("[%s] [%s] [%s] %s\n", getTimestamp(), level, module, message);
-	#else
-	logMessage("[%s] %s\n", level, message);
-	#endif
+	Serial.printf("[%s] [%s] %s\n", level, module, message);
 }
 
 void logInfo(const char *module, const char *message) {

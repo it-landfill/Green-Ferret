@@ -41,7 +41,6 @@ void loop(){
 	float x = random(11, 12);
 	float y = random(44, 45);
 	char *jsonMsg = serializeSensorData(&temperature, &humidity, &pressure, &x, &y);
-	Serial.printf("Json to be pubblish: %s\n", jsonMsg);
+	logInfof("MAIN", "Json to be pubblish: %s", jsonMsg);
 	mqttPublishSensorData(jsonMsg);
-	// Serial.printf("Json to be pubblish: \n", publishData(jsonMsg));
 }
