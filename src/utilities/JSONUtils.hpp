@@ -13,17 +13,17 @@
 #define JSONUTILS_HPP
 
 /**
- * @brief Serialize the sensor data into a JSON string. Parameters are passed as pointers and omitted if NULL.
- * 
- * @param temperature (float*)
- * @param humidity (float*)
- * @param pressure (float*)
- * @param latitude (float*)
- * @param longitude (float*)
- * @param aqi (int*)
- * @param tvoc (int*)
- * @param eco2 (int*)
- * @return (char*) The JSON string. MUST be freed after use.
+ * @brief Serialize the sensor data to JSON. If a value is NULL it will not be added to the JSON string
+ *
+ * @param temperature temperature value
+ * @param humidity humidity value
+ * @param pressure pressure value
+ * @param latitude latitude value
+ * @param longitude longitude value
+ * @param aqi aqi value
+ * @param tvoc tvoc value
+ * @param eco2 eco2 value
+ * @return char* JSON string. MUST be freed after use.
  */
-char* serializeSensorData(float *temperature, float *humidity, float *pressure, float *latitude, float *longitude, int *aqi, int *tvoc, int *eco2);
+char* serializeSensorData(float *temperature=NULL, float *humidity=NULL, float *pressure=NULL, float *latitude=NULL, float *longitude=NULL, int *aqi=NULL, int *tvoc=NULL, int *eco2=NULL);
 #endif

@@ -15,19 +15,6 @@
 // This is the number of characters in the longest JSON object, plus 10.
 #define JSON_BUFFER_SIZE 130
 
-/**
- * @brief Serialize the sensor data to JSON
- *
- * @param temperature temperature value
- * @param humidity humidity value
- * @param pressure pressure value
- * @param latitude latitude value
- * @param longitude longitude value
- * @param aqi aqi value
- * @param tvoc tvoc value
- * @param eco2 eco2 value
- * @return char* JSON string
- */
 char* serializeSensorData(float *temperature, float *humidity, float *pressure, float *latitude, float *longitude, int *aqi, int *tvoc, int *eco2) {
 	// JsonDocuments are made to be single use, should NOT re use them (https://arduinojson.org/v6/how-to/reuse-a-json-document/)
 	StaticJsonDocument<JSON_BUFFER_SIZE> doc;
@@ -49,7 +36,7 @@ char* serializeSensorData(float *temperature, float *humidity, float *pressure, 
 	char *output = (char *)malloc(size);
 
 	// Serialize the json document
-	serializeJson(doc, output, size);
+	serializeJson(doc, output, JSON_BUFFER_SIZE);
 
 	return output;
 }
