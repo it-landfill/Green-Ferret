@@ -13,88 +13,92 @@
 #include "Arduino.h"
 #include "WiFi.h"
 #include <PubSubClient.h>
-#include <ArduinoJson.h>
+
+#include "../MQTT.hpp"
 
 #include "../../utilities/loggerLib.hpp"
+#include "../../utilities/boardInfo.hpp"
 
 #define MODULE_NAME "MQTT"
 
+// MQTT Broker configuration
 const char broker[] = "pi3aleben";
 const char user[] = "IoT";
 const char psw[] = "iot2023";
 int port = 1883;
 const char clientID[] = "cresp";
-const char *topicPushData = "sensors/undefined";
+const char *sensorDataTopic;
 
+// MQTT Client
 WiFiClient client;
 PubSubClient clientMQTT(client);
 
 void callback(char* topic, byte* payload, unsigned int length) {
-	logDebug(MODULE_NAME, "Message arrived");
-	StaticJsonDocument<200> doc;
-	deserializeJson(doc, payload);
-	int communicationMode = doc["CommunicationMode"];
-	logDebugf(MODULE_NAME, "Communication mode: %d", communicationMode);
+	logDebugf(MODULE_NAME, "Message arrived: %f", payload);
 }
 
-void connectMQTT() {
-    logDebug(MODULE_NAME, "Connecting to MQTT broker");
-	client = WiFiClient();
-	// Authentification
+char* genConfigTopic() {
+	char *topic = new char[30];
+	sprintf(topic, "CFG/%s/Config", getEsp32ID());
+	return topic;
+}
+
+void setSensorDataTopic() {
+	if (sensorDataTopic != NULL) return;
+
+	char *topic = new char[30];
+	sprintf(topic, "mobile-sensors/%sa", getEsp32ID());
+	sensorDataTopic = topic;
+}
+
+void mqttSetup() {
+	logDebug(MODULE_NAME, "Setting up MQTT");
+
+	setSensorDataTopic();
+
+	// Configure MQTT client parameters
 	clientMQTT.setServer(broker, port);
 	clientMQTT.setCallback(callback);
-    if (clientMQTT.connect(clientID, user, psw)) logDebug(MODULE_NAME, "Connected to MQTT broker");
-    else logError(MODULE_NAME, "MQTT Broker not available");
 }
 
-void subscribeTopicMQTT(char *topic) {
-    clientMQTT.subscribe(topic);
-	logDebug(MODULE_NAME, "Subscribed to config topic");
+void mqttSubscribe() {
+	const char* topics[] = { genConfigTopic() };
+
+	for (int i = 0; i < sizeof(topics) / sizeof(topics[0]); i++) {
+		logDebugf(MODULE_NAME, "Subscribing to topic: %s", topics[i]);
+		bool res = clientMQTT.subscribe(topics[i]);
+		if (res) logDebugf(MODULE_NAME, "Subscribed to topic %s", topics[i]);
+		else logDebugf(MODULE_NAME, "Subscription failed to topic %s", topics[i]);
+	}
+
 }
 
-bool publishData(char *payload) {
-    bool connected = clientMQTT.connected();
-    if (!connected) connected = clientMQTT.connect(clientID);
-    if (connected) {
-		Serial.println(payload);
-        bool result = clientMQTT.publish(topicPushData, payload);
-        clientMQTT.loop();
-        return result;
-    }
-    else Serial.println(F("MQTT Broker not available"));
-    return (false);
+bool mqttConnect() {
+	if (!clientMQTT.connected()) {
+		logDebug(MODULE_NAME, "Connecting to MQTT broker");
+
+		// Connect to MQTT broker
+		if (clientMQTT.connect(clientID, user, psw)) {
+			logDebug(MODULE_NAME, "Connected to MQTT broker");
+			mqttSubscribe();
+			return true;
+		}
+		else {
+			logError(MODULE_NAME, "MQTT Broker not available");
+			return false;
+		}
+	}
 }
 
-char *getEsp32ID() {
-	uint64_t chipid = ESP.getEfuseMac();
-	char *id = new char[13];
-	sprintf(id, "%04X%08X", (uint16_t)(chipid >> 32), (uint32_t)chipid);
-	return id;
-}
+bool mqttPublishSensorData(char *payload) {
+	if (!clientMQTT.connected()) mqttConnect();
 
-char* genConfigChannel() {
-	char *channel = new char[30];
-	sprintf(channel, "CFG/%s/Config", getEsp32ID());
-	return channel;
-}
-
-void setDataChannel() {
-	char *channel = new char[30];
-	sprintf(channel, "sensors/%s", getEsp32ID());
-	topicPushData = channel;
-}
-
-char* setJsonSensorData(float temperature, float humidity, float pressure, float x, float y) {
-	StaticJsonDocument<200> doc;
-	doc["Temperature"] = temperature;
-	doc["Humidity"] = humidity;
-	doc["Pressure"] = pressure;
-	doc["X"] = x;
-	doc["Y"] = y;
-	char json[200];
-	serializeJson(doc, json);
-	// Print the result to the serial monitor
-	Serial.println(json);
-	publishData(json);
-	return json;
+	if (!clientMQTT.connected()) {
+		Serial.println(F("MQTT Broker not available"));
+		return false;
+	}
+	Serial.println(payload);
+	bool result = clientMQTT.publish(sensorDataTopic, payload);
+	clientMQTT.loop();
+	return result;
 }

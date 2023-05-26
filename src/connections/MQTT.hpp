@@ -12,11 +12,7 @@
 
 #ifndef MQTT_HPP
 #define MQTT_HPP
-void connectMQTT();
-void subscribeTopicMQTT(char *topic);
-bool publishData(char *payload);
-char *getEsp32ID();
-char* genConfigChannel();
-void setDataChannel();
-char* setJsonSensorData(float temperature, float humidity, float pressure, float x, float y);
+void mqttSetup();
+bool mqttConnect();
+bool mqttPublishSensorData(char *payload);
 #endif

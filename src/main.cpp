@@ -4,7 +4,7 @@
 #include "connections/WiFi.hpp"
 #include "connections/MQTT.hpp"
 #include "utilities/loggerLib.hpp"
-#include "utilities/timeLib.hpp"
+#include "utilities/JSONUtils.hpp"
 
 #include "sensors/aht20.hpp"
 #include "sensors/bmp280.hpp"
@@ -21,10 +21,8 @@ void setup(){
 	// syncTimeServer();
 	
 	// Connect to the remote broker and subscribe to the topic
-    connectMQTT(); 
-    subscribeTopicMQTT(genConfigChannel());
-	// Set the data channel
-	setDataChannel();
+	mqttSetup();
+	mqttConnect();
 
 	// Sensor setup
 	Wire.begin(SDA_PIN, SCL_PIN);
@@ -42,7 +40,8 @@ void loop(){
 	float pressure = random(1000, 1010);
 	float x = random(11, 12);
 	float y = random(44, 45);
-	char *jsonMsg = setJsonSensorData(temperature, humidity, pressure, x, y);
+	char *jsonMsg = serializeSensorData(&temperature, &humidity, &pressure, &x, &y);
+	//char *jsonMsg = setJsonSensorData(temperature, humidity, pressure, x, y);
 	// Serial.printf("Json to be pubblish: %s\n", jsonMsg);
 	// publishData(jsonMsg);
 	// Serial.printf("Json to be pubblish: \n", publishData(jsonMsg));
