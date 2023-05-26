@@ -26,23 +26,39 @@ const char broker[] = "pi3aleben";
 const char user[] = "IoT";
 const char psw[] = "iot2023";
 int port = 1883;
-const char clientID[] = "cresp";
+const char *clientID = getEsp32ID();
 const char *sensorDataTopic;
 
 // MQTT Client
 WiFiClient client;
 PubSubClient clientMQTT(client);
 
+/**
+ * @brief Callback function for MQTT messages.
+ * 
+ * @param topic The topic of the message
+ * @param payload The message
+ * @param length The length of the message
+ */
 void callback(char* topic, byte* payload, unsigned int length) {
 	logDebugf(MODULE_NAME, "Message arrived: %f", payload);
 }
 
+/**
+ * @brief Generate the configuration topic.
+ * 
+ * @return char* The configuration topic
+ */
 char* genConfigTopic() {
 	char *topic = new char[30];
 	sprintf(topic, "CFG/%s/Config", getEsp32ID());
 	return topic;
 }
 
+/**
+ * @brief Set the Sensor Data Topic.
+ * 
+ */
 void setSensorDataTopic() {
 	if (sensorDataTopic != NULL) return;
 
@@ -61,9 +77,12 @@ void mqttSetup() {
 	clientMQTT.setCallback(callback);
 }
 
-void mqttSubscribe() {
-	const char* topics[] = { genConfigTopic() };
-
+/**
+ * @brief Subscribe to the given topics.
+ * 
+ * @param topics List of topics to subscribe to
+ */
+void mqttSubscribe(char* topics[]) {
 	for (int i = 0; i < sizeof(topics) / sizeof(topics[0]); i++) {
 		logDebugf(MODULE_NAME, "Subscribing to topic: %s", topics[i]);
 		bool res = clientMQTT.subscribe(topics[i]);
@@ -80,7 +99,9 @@ bool mqttConnect() {
 		// Connect to MQTT broker
 		if (clientMQTT.connect(clientID, user, psw)) {
 			logDebug(MODULE_NAME, "Connected to MQTT broker");
-			mqttSubscribe();
+
+			char *topics[] = {genConfigTopic()};
+			mqttSubscribe(topics);
 			return true;
 		}
 		else {
@@ -91,13 +112,15 @@ bool mqttConnect() {
 }
 
 bool mqttPublishSensorData(char *payload) {
+	// Connect to MQTT broker if not connected
 	if (!clientMQTT.connected()) mqttConnect();
 
+	// If still not connected, return false
 	if (!clientMQTT.connected()) {
-		Serial.println(F("MQTT Broker not available"));
+		logError(MODULE_NAME, "MQTT Broker not available");
 		return false;
 	}
-	Serial.println(payload);
+
 	bool result = clientMQTT.publish(sensorDataTopic, payload);
 	clientMQTT.loop();
 	return result;

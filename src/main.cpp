@@ -25,10 +25,10 @@ void setup(){
 	mqttConnect();
 
 	// Sensor setup
-	Wire.begin(SDA_PIN, SCL_PIN);
-	aht20Setup();
-	ens160Setup(aht20GetTemperature(), aht20GetHumidity());
-	bmp280Setup();
+	//Wire.begin(SDA_PIN, SCL_PIN);
+	//aht20Setup();
+	//ens160Setup(aht20GetTemperature(), aht20GetHumidity());
+	//bmp280Setup();
 
 	logInfo("MAIN", "Setup Complete");
 }
@@ -41,8 +41,7 @@ void loop(){
 	float x = random(11, 12);
 	float y = random(44, 45);
 	char *jsonMsg = serializeSensorData(&temperature, &humidity, &pressure, &x, &y);
-	//char *jsonMsg = setJsonSensorData(temperature, humidity, pressure, x, y);
-	// Serial.printf("Json to be pubblish: %s\n", jsonMsg);
-	// publishData(jsonMsg);
+	Serial.printf("Json to be pubblish: %s\n", jsonMsg);
+	mqttPublishSensorData(jsonMsg);
 	// Serial.printf("Json to be pubblish: \n", publishData(jsonMsg));
 }

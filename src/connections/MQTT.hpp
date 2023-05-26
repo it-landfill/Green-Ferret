@@ -12,7 +12,25 @@
 
 #ifndef MQTT_HPP
 #define MQTT_HPP
+/**
+ * @brief Setup MQTT connection.
+ * Set the broker address and port, the client ID and the topic.
+ * 
+ */
 void mqttSetup();
+/**
+ * @brief Connect to the MQTT broker.
+ * 
+ * @return true Connection successful
+ * @return false Connection failed
+ */
 bool mqttConnect();
+/**
+ * @brief Publish a message to the MQTT broker in the sensor data topic.
+ * 
+ * @param payload Message to publish
+ * @return true Message published
+ * @return false Publish failed
+ */
 bool mqttPublishSensorData(char *payload);
 #endif
