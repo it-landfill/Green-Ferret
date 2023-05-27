@@ -39,19 +39,34 @@ void setup(){
 
 int counter = 0;
 
+float generateLatitute() {
+	// Between 45.6 and 45.7
+	float lat = 45.6;
+	lat += (float) (rand() % 10000 + 1) / 100000;
+	return lat;
+}
+
+float generateLongitude() {
+	// Between 12.2 and 12.3
+	float lon = 12.2;
+	lon += (float) (rand() % 10000 + 1) / 100000;
+	return lon;
+}
+
 void loop(){
 	float temperature = bmp280ReadTemperature();
 	float humidity = aht20GetHumidity();
-	float lat = 45.666668;
-	float lon = 12.250000;
+	float lat = generateLatitute();
+	float lon = generateLongitude();
 	int aqi = ens160GetAQI();
 	int tvoc = ens160GetTVOC();
 	int eco2 = ens160GetECO2();
 	char* jsonMsg = NULL;
 
-	if (counter++ == 6) { // Every minute
+	if (counter++ == 5) { // Every minute
 		float pressure = bmp280ReadPressure();
 		jsonMsg = serializeSensorData(&temperature, &humidity, &pressure, &lat, &lon, &aqi, &tvoc, &eco2);
+		counter = 0;
 	} else {
 		jsonMsg = serializeSensorData(&temperature, &humidity, NULL, &lat, &lon, &aqi, &tvoc, &eco2);
 	}
