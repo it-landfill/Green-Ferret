@@ -57,5 +57,6 @@ void loop(){
 	}
 	logInfof("MAIN", "Json to be pubblish: %s", jsonMsg);
 	mqttPublishSensorData(jsonMsg);
+	free(jsonMsg);
 	delay(10000); // Sleep for 10 seconds
 }
