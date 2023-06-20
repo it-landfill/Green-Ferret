@@ -13,6 +13,7 @@ DFRobot_ENS160_I2C ENS160(&Wire, /*I2CAddr*/ 0x53);
 bool ens160Setup(float ambientTemp, float ambientHum, uint8_t mode) {
 	logDebug(MODULE_NAME,"Begin setup");
 
+	#ifndef DISABLE_ENS160
 	// Init the sensor
 	int i = 0;
 	while (NO_ERR != ENS160.begin() && i++ < 10) {
@@ -45,6 +46,9 @@ bool ens160Setup(float ambientTemp, float ambientHum, uint8_t mode) {
 	 *
 	 */
 	ENS160.setTempAndHum(ambientTemp, ambientHum);
+	#else
+	logWarning(MODULE_NAME, "ENS160 disabled");
+	#endif
 
 	logDebug(MODULE_NAME,"End setup");
 	return true;
@@ -52,31 +56,52 @@ bool ens160Setup(float ambientTemp, float ambientHum, uint8_t mode) {
 
 void ens160SetPWRMode(uint8_t mode) {
 	logVerbosef(MODULE_NAME,"Setting power mode: %d\n", mode);
+	#ifndef DISABLE_ENS160
 	ENS160.setPWRMode(mode);
+	#endif
 }
 
 void setTempAndHum(float ambientTemp, float relativeHumidity) {
 	logVerbosef(MODULE_NAME,"Setting temperature: %f and humidity: %f\n", ambientTemp, relativeHumidity);
+	#ifndef DISABLE_ENS160
 	ENS160.setTempAndHum(ambientTemp, relativeHumidity);
+	#endif
 }
 
 uint8_t ens160GetStatus(){
+	#ifndef DISABLE_ENS160
 	return ENS160.getENS160Status();
+	#else
+	return -1;
+	#endif
 }
 
 uint8_t ens160GetAQI(){
+	#ifndef DISABLE_ENS160
 	return ENS160.getAQI();
+	#else
+	return -1;
+	#endif
 }
 
 uint16_t ens160GetTVOC(){
+	#ifndef DISABLE_ENS160
 	return ENS160.getTVOC();
+	#else
+	return -1;
+	#endif
 }
 
 uint16_t ens160GetECO2(){
+	#ifndef DISABLE_ENS160
 	return ENS160.getECO2();
+	#else
+	return -1;
+	#endif
 }
 
 char* ens160GetECO2Label(){
+	#ifndef DISABLE_ENS160
 	uint16_t val = ens160GetECO2();
 
 	if (val>1500) strcpy(label, "Unhealthy");
@@ -86,4 +111,7 @@ char* ens160GetECO2Label(){
 	else strcpy(label, "Excelent");
 
 	return label; 
+	#else
+	return "Disabled";
+	#endif
 }

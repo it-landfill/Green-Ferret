@@ -13,10 +13,14 @@ unsigned long lastMeasurement = 0;
 bool aht20Setup(){
 	logDebug(MODULE_NAME,"Begin setup");
 
+	#ifndef DISABLE_ENS160
 	if (aht20.begin() == false)  {
 		logError(MODULE_NAME, "AHT20 not detected. Please check wiring.");
 		return false;
 	}
+	#else
+	logWarning(MODULE_NAME, "AHT20 disabled");
+	#endif
 	
 	logDebug(MODULE_NAME, "Sensor initialized correctly");
 
@@ -25,18 +29,28 @@ bool aht20Setup(){
 }
 
 void refreshMeasurement(){
+	#ifndef DISABLE_ENS160
 	if (millis()>lastMeasurement+MESAUREMENT_INTERVAL_MS) {
 		while (!aht20.available()) delay(100);
 		lastMeasurement = millis();
 	}
+	#endif
 }
 
 float aht20GetTemperature(){
+	#ifndef DISABLE_ENS160
 	refreshMeasurement();
 	return aht20.getTemperature();
+	#else
+	return -1.0;
+	#endif
 }
 
 float aht20GetHumidity(){
+	#ifndef DISABLE_ENS160
 	refreshMeasurement();
 	return aht20.getHumidity();
+	#else
+	return -1.0;
+	#endif
 }
