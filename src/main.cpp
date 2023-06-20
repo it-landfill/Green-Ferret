@@ -30,7 +30,7 @@ void setup(){
 	#ifndef LOCAL_DEBUG
 	logInfo("MAIN", "Local Debug Enabled");
 	wifiSetup(true);
-	dataUploadSetup();
+	dataUploadSetup(HTTP);
 	#endif
 
 	// Sensor setup

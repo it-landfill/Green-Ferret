@@ -18,7 +18,8 @@
  */
 enum DataUploadProtocol {
 	NONE,
-	MQTT
+	MQTT,
+	HTTP
 };
 
 /**
@@ -36,5 +37,12 @@ void dataUploadSetup(enum DataUploadProtocol protocol = MQTT);
  * @return false Publish failed
  */
 bool publishSensorData(char *payload);
+
+/**
+ * @brief Change the protocol used to publish messages.
+ * 
+ * @param protocol The new protocol to use
+ */
+void changeDataUploadProtocol(enum DataUploadProtocol protocol);
 
 #endif

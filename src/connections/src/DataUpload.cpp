@@ -14,6 +14,7 @@
 #include "../DataUpload.hpp"
 #include "../../utilities/loggerLib.hpp"
 #include "../MQTT.hpp"
+#include "../HTTP.hpp"
 
 enum DataUploadProtocol dataUploadProtocol = NONE;
 
@@ -33,7 +34,13 @@ bool publishSensorData(char *payload){
 	switch (dataUploadProtocol) {
 		case MQTT:
 			return mqttPublishSensorData(payload);
+		case HTTP:
+			return httpPublishSensorData(payload);
 		default:
 			return false;
 	}
+}
+
+void changeDataUploadProtocol(enum DataUploadProtocol protocol) {
+	dataUploadProtocol = protocol;
 }
