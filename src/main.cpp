@@ -2,7 +2,7 @@
 #include <Wire.h>
 
 #include "connections/WiFi.hpp"
-#include "connections/MQTT.hpp"
+#include "connections/DataUpload.hpp"
 #include "utilities/loggerLib.hpp"
 #include "utilities/JSONUtils.hpp"
 
@@ -19,20 +19,29 @@
 #define SCL_PIN 42
 #endif
 
+//#define LOCAL_DEBUG
+//#define DISABLE_ENS160
+//#define DISABLE_BMP280
+
 void setup(){
 	Serial.begin(115200);
 	logInfo("MAIN", "Starting Setup");
-	wifiSetup(true);
 
-	// Connect to the remote broker and subscribe to the topic
-	mqttSetup();
-	mqttConnect();
+	#ifndef LOCAL_DEBUG
+	logInfo("MAIN", "Local Debug Enabled");
+	wifiSetup(true);
+	dataUploadSetup();
+	#endif
 
 	// Sensor setup
 	Wire.begin(SDA_PIN, SCL_PIN);
+	#ifndef DISABLE_ENS160
 	aht20Setup();
 	ens160Setup(aht20GetTemperature(), aht20GetHumidity());
+	#endif
+	#ifndef DISABLE_BMP280
 	bmp280Setup();
+	#endif
 
 	logInfo("MAIN", "Setup Complete");
 }
@@ -54,24 +63,49 @@ float generateLongitude() {
 }
 
 void loop(){
-	float temperature = bmp280ReadTemperature();
-	float humidity = aht20GetHumidity();
+
 	float lat = generateLatitute();
 	float lon = generateLongitude();
+
+	#ifndef DISABLE_ENS160
+	float humidity = aht20GetHumidity();
 	int aqi = ens160GetAQI();
 	int tvoc = ens160GetTVOC();
 	int eco2 = ens160GetECO2();
+	#else
+	float humidity = -1.0;
+	int aqi = -1;
+	int tvoc = -1;
+	int eco2 = -1;
+	#endif
+
+	#ifndef DISABLE_BMP280
+	float temperature = bmp280ReadTemperature();
+	#else
+	float temperature = -1.0;
+	#endif
+
 	char* jsonMsg = NULL;
 
 	if (counter++ == 5) { // Every minute
+		#ifndef DISABLE_BMP280
 		float pressure = bmp280ReadPressure();
+		#else
+		float pressure = -1.0;
+		#endif
 		jsonMsg = serializeSensorData(&temperature, &humidity, &pressure, &lat, &lon, &aqi, &tvoc, &eco2);
 		counter = 0;
 	} else {
 		jsonMsg = serializeSensorData(&temperature, &humidity, NULL, &lat, &lon, &aqi, &tvoc, &eco2);
 	}
 	logInfof("MAIN", "Json to be pubblish: %s", jsonMsg);
-	mqttPublishSensorData(jsonMsg);
+	#ifndef LOCAL_DEBUG
+	publishSensorData(jsonMsg);
+	#endif
 	free(jsonMsg);
+	#ifdef LOCAL_DEBUG
+	delay(1000);
+	#else
 	delay(10000); // Sleep for 10 seconds
+	#endif
 }
