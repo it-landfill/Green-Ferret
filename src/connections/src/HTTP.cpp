@@ -20,7 +20,27 @@
 
 #define MODULE_NAME "HTTP"
 
-const char server[] = "http://pi3aleben:5000";
+// HTTP Server configuration
+const char serverBaseAddress[] = "http://pi3aleben:5000/telemetry";
+const char group[] = "mobile-sensors";
+const char *serverAddress = NULL;
+
+void setServerAddress() {
+	if (serverAddress != NULL) {
+		logError(MODULE_NAME, "Server address already set");
+		return;
+	}
+
+	// Address length: 31 (base) + 1 (separator) + group length + 1 (separator) + clientID length + 1 (null terminator)
+	int len = 31 + 1 + strlen(group) + 1 + getEsp32IDLen() + 1;
+	char *addr = (char*) malloc(len * sizeof(char)); // Allocate memory for the address. This will last until the end of the program so it's ok (probably) to not free it
+	sprintf(addr, "%s/%s/%s", serverBaseAddress, group, getEsp32ID());
+	serverAddress = addr;
+}
+
+void httpSetup() {
+	setServerAddress();
+}
 
 bool httpPublishSensorData(char *payload) {
 	// Check WiFi connection
@@ -31,7 +51,7 @@ bool httpPublishSensorData(char *payload) {
 
 	// Create HTTP client
 	HTTPClient http;
-	http.begin(server);
+	http.begin(serverAddress);
 	http.addHeader("Content-Type", "application/json");
 
 	int responseCode = http.POST(payload);

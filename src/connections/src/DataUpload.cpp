@@ -25,6 +25,9 @@ void dataUploadSetup(enum DataUploadProtocol protocol) {
 	mqttSetup();
 	mqttConnect();
 
+	// Initialize HTTP client (but don't connect yet)
+	httpSetup();
+
 	// Set the protocol
 	dataUploadProtocol = protocol;
 }

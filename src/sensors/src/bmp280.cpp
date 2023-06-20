@@ -41,7 +41,7 @@ float bmp280ReadTemperature() {
 	#ifndef DISABLE_BMP280
     return bmp.readTemperature();
 	#else
-	return -1.0;
+	return -1.1;
 	#endif
 }
 
@@ -49,6 +49,6 @@ float bmp280ReadPressure() {
 	#ifndef DISABLE_BMP280
     return bmp.readPressure();
 	#else
-	return -1.0;
+	return -1.1;
 	#endif
 }

@@ -19,4 +19,11 @@
  */
 char * getEsp32ID();
 
+/**
+ * @brief Get the Esp32 ID Len object
+ * 
+ * @return int 
+ */
+int getEsp32IDLen();
+
 #endif

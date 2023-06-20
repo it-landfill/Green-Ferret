@@ -72,7 +72,7 @@ uint8_t ens160GetStatus(){
 	#ifndef DISABLE_ENS160
 	return ENS160.getENS160Status();
 	#else
-	return -1;
+	return 0;
 	#endif
 }
 
@@ -80,7 +80,7 @@ uint8_t ens160GetAQI(){
 	#ifndef DISABLE_ENS160
 	return ENS160.getAQI();
 	#else
-	return -1;
+	return 0;
 	#endif
 }
 
@@ -88,7 +88,7 @@ uint16_t ens160GetTVOC(){
 	#ifndef DISABLE_ENS160
 	return ENS160.getTVOC();
 	#else
-	return -1;
+	return 0;
 	#endif
 }
 
@@ -96,7 +96,7 @@ uint16_t ens160GetECO2(){
 	#ifndef DISABLE_ENS160
 	return ENS160.getECO2();
 	#else
-	return -1;
+	return 0;
 	#endif
 }
 
