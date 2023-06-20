@@ -14,6 +14,7 @@
 
 #include <Adafruit_BMP280.h>
 
+#include "../bmp280.hpp"
 #include "../../utilities/loggerLib.hpp"
 
 #define MODULE_NAME "BMP280"

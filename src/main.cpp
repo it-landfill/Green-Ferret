@@ -20,17 +20,16 @@
 #endif
 
 //#define LOCAL_DEBUG
-#define DISABLE_ENS160
-#define DISABLE_BMP280
 
 void setup(){
 	Serial.begin(115200);
 	logInfo("MAIN", "Starting Setup");
 
 	#ifndef LOCAL_DEBUG
-	logInfo("MAIN", "Local Debug Enabled");
 	wifiSetup(true);
 	dataUploadSetup(HTTP);
+	#else
+	logWarning("MAIN", "Local Debug Enabled");
 	#endif
 
 	// Sensor setup

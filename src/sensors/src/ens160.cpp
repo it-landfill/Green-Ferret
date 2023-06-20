@@ -112,6 +112,7 @@ char* ens160GetECO2Label(){
 
 	return label; 
 	#else
-	return "Disabled";
+	strcpy(label, "Disabled");
+	return label;
 	#endif
 }

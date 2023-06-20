@@ -13,7 +13,7 @@ unsigned long lastMeasurement = 0;
 bool aht20Setup(){
 	logDebug(MODULE_NAME,"Begin setup");
 
-	#ifndef DISABLE_ENS160
+	#ifndef DISABLE_AHT20
 	if (aht20.begin() == false)  {
 		logError(MODULE_NAME, "AHT20 not detected. Please check wiring.");
 		return false;
@@ -29,7 +29,7 @@ bool aht20Setup(){
 }
 
 void refreshMeasurement(){
-	#ifndef DISABLE_ENS160
+	#ifndef DISABLE_AHT20
 	if (millis()>lastMeasurement+MESAUREMENT_INTERVAL_MS) {
 		while (!aht20.available()) delay(100);
 		lastMeasurement = millis();
@@ -38,7 +38,7 @@ void refreshMeasurement(){
 }
 
 float aht20GetTemperature(){
-	#ifndef DISABLE_ENS160
+	#ifndef DISABLE_AHT20
 	refreshMeasurement();
 	return aht20.getTemperature();
 	#else
@@ -47,7 +47,7 @@ float aht20GetTemperature(){
 }
 
 float aht20GetHumidity(){
-	#ifndef DISABLE_ENS160
+	#ifndef DISABLE_AHT20
 	refreshMeasurement();
 	return aht20.getHumidity();
 	#else
