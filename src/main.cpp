@@ -2,7 +2,7 @@
 #include <Wire.h>
 
 #include "connections/WiFi.hpp"
-#include "connections/MQTT.hpp"
+#include "connections/DataUpload.hpp"
 #include "utilities/loggerLib.hpp"
 #include "utilities/JSONUtils.hpp"
 
@@ -19,14 +19,18 @@
 #define SCL_PIN 42
 #endif
 
+//#define LOCAL_DEBUG
+
 void setup(){
 	Serial.begin(115200);
 	logInfo("MAIN", "Starting Setup");
-	wifiSetup(true);
 
-	// Connect to the remote broker and subscribe to the topic
-	mqttSetup();
-	mqttConnect();
+	#ifndef LOCAL_DEBUG
+	wifiSetup(true);
+	dataUploadSetup(HTTP);
+	#else
+	logWarning("MAIN", "Local Debug Enabled");
+	#endif
 
 	// Sensor setup
 	Wire.begin(SDA_PIN, SCL_PIN);
@@ -54,13 +58,18 @@ float generateLongitude() {
 }
 
 void loop(){
-	float temperature = bmp280ReadTemperature();
-	float humidity = aht20GetHumidity();
+
 	float lat = generateLatitute();
 	float lon = generateLongitude();
+
+	float humidity = aht20GetHumidity();
 	int aqi = ens160GetAQI();
 	int tvoc = ens160GetTVOC();
 	int eco2 = ens160GetECO2();
+
+
+	float temperature = bmp280ReadTemperature();
+
 	char* jsonMsg = NULL;
 
 	if (counter++ == 5) { // Every minute
@@ -71,7 +80,13 @@ void loop(){
 		jsonMsg = serializeSensorData(&temperature, &humidity, NULL, &lat, &lon, &aqi, &tvoc, &eco2);
 	}
 	logInfof("MAIN", "Json to be pubblish: %s", jsonMsg);
-	mqttPublishSensorData(jsonMsg);
+	#ifndef LOCAL_DEBUG
+	publishSensorData(jsonMsg);
+	#endif
 	free(jsonMsg);
+	#ifdef LOCAL_DEBUG
+	delay(1000);
+	#else
 	delay(10000); // Sleep for 10 seconds
+	#endif
 }

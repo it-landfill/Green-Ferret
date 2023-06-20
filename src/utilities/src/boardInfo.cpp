@@ -24,3 +24,8 @@ char * getEsp32ID() {
 	sprintf(ESP32_ID, "%04X%08X", (uint16_t)(chipid >> 32), (uint32_t)chipid);
 	return ESP32_ID;
 }
+
+int getEsp32IDLen() {
+	if (ESP32_ID == NULL) getEsp32ID();
+	return strlen(ESP32_ID);
+}
