@@ -20,7 +20,8 @@
 enum DataUploadProtocol {
 	NONE,
 	MQTT,
-	HTTP
+	HTTP,
+	COAP
 };
 
 /**

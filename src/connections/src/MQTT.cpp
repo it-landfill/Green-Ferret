@@ -137,6 +137,7 @@ void mqttSetup(Settings *settings, ConnectionSettings *connSettingsRef) {
 	// Configure MQTT client parameters
 	clientMQTT.setServer(connSettingsRef1->mqttBroker.c_str(), connSettingsRef1->mqttPort);
 	clientMQTT.setCallback(callback);
+	logInfo(MODULE_NAME, "MQTT setup completed");
 }
 
 /**

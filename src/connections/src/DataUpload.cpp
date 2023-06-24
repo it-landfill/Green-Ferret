@@ -15,6 +15,7 @@
 #include "../../utilities/loggerLib.hpp"
 #include "../MQTT.hpp"
 #include "../HTTP.hpp"
+#include "../COAP.hpp"
 
 #define MODULE_NAME "DataUploader"
 
@@ -41,6 +42,8 @@ void dataUploadSetup(Settings* settings, ConnectionSettings *connSettings) {
 		logInfo(MODULE_NAME, "Waiting for config from MQTT...\tSleeping for 1 second.");
 		delay(1000);
 	}
+	// Initialize COAP client (but don't connect yet)
+	coapSetup();
 
 	// Set the protocol
 	sett = settings;
@@ -61,6 +64,8 @@ bool publishSensorData(char *payload){
 			return mqttPublishSensorData(payload);
 		case HTTP:
 			return httpPublishSensorData(payload);
+		case COAP:
+			return coapPublishSensorData(payload);
 		default:
 			return false;
 	}
