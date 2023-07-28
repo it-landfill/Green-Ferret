@@ -46,3 +46,24 @@ float getDistanceHaversine(float lat1, float lon1, float lat2, float lon2) {
 	return R * distance;
 }
 
+// Vincenty formula
+// Treats the globe as an ellipsoid, the most accurate but also the slowest formula.
+// Test: Distance between Big Ben in London (51.5007° N, 0.1246° W) and The Statue of Liberty in  New York (40.6892° N, 74.0445° W) is 5574.8 km.
+float getDistanceVincenty(float lat1, float lon1, float lat2, float lon2) {
+	// Calculate the difference between the two longitudes and latitudes
+	float dLat = (lat2 - lat1) * DEG_TO_RAD;
+	float dLon = (lon2 - lon1) * DEG_TO_RAD;
+	// Convert the latitudes to radians
+	float lat1Rad = lat1 * DEG_TO_RAD;
+	float lat2Rad = lat2 * DEG_TO_RAD;
+	// Calculate the numerator and denominator of the formula
+	float numerator = sqrt(pow(cos(lat2Rad) * sin(dLon), 2) + pow(cos(lat1Rad) * sin(lat2Rad) - sin(lat1Rad) * cos(lat2Rad) * cos(dLon), 2));
+	float denominator = sin(lat1Rad) * sin(lat2Rad) + cos(lat1Rad) * cos(lat2Rad) * cos(dLon);
+	// Calculate the central angle
+	float centralAngle = atan2(numerator, denominator);
+	// Calculate the distance: distance = R * centralAngle
+	float distance = R * centralAngle;
+	// Return the distance in km
+	return distance;
+}
+
