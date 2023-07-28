@@ -67,3 +67,18 @@ float getDistanceVincenty(float lat1, float lon1, float lat2, float lon2) {
 	return distance;
 }
 
+// Spherical law of cosines
+// Treats the globe as a sphere, less accurate than the Haversine formula but faster.
+// Test: Distance between Big Ben in London (51.5007° N, 0.1246° W) and The Statue of Liberty in  New York (40.6892° N, 74.0445° W) is 5574.8 km.
+float getDistanceSphericalLawOfCosines(float lat1, float lon1, float lat2, float lon2) {
+	// Calculate the difference between the two longitudes and latitudes
+	float dLat = (lat2 - lat1) * DEG_TO_RAD;
+	float dLon = (lon2 - lon1) * DEG_TO_RAD;
+	// Convert the latitudes to radians
+	float lat1Rad = lat1 * DEG_TO_RAD;
+	float lat2Rad = lat2 * DEG_TO_RAD;
+	// Calculate the distance: distance = arccos(sin(lat1) * sin(lat2) + cos(lat1) * cos(lat2) * cos(dLon))
+	float distance = acos(sin(lat1Rad) * sin(lat2Rad) + cos(lat1Rad) * cos(lat2Rad) * cos(dLon));
+	// Return the distance in km
+	return R * distance;
+}
