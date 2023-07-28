@@ -12,6 +12,11 @@
 
 #include "../gpsDistanceUtils.hpp"
 
+// Earth's radius in km 
+#define R 6371
+// Degrees to radians conversion factor
+#define DEG_TO_RAD 0.0174533
+
 // Naive formula
 // Treats the globe as a flat surface, the least accurate but also the fastest formula.
 // Test: Distance between Big Ben in London (51.5007° N, 0.1246° W) and The Statue of Liberty in  New York (40.6892° N, 74.0445° W) is 5574.8 km.
@@ -22,3 +27,22 @@ float getDistanceNaive(float lat1, float lon1, float lat2, float lon2) {
 	// Calculate and return the distance: distance = sqrt(dLat^2 + dLon^2)
 	return sqrt(pow(dLat, 2) + pow(dLon, 2));
 }
+
+// Haversine formula
+// Treats the globe as a sphere, more accurate than the naive formula but slower.
+// Test: Distance between Big Ben in London (51.5007° N, 0.1246° W) and The Statue of Liberty in  New York (40.6892° N, 74.0445° W) is 5574.8 km.
+float getDistanceHaversine(float lat1, float lon1, float lat2, float lon2) {
+	// Calculate the difference between the two longitudes and latitudes
+	float dLat = (lat2 - lat1) * DEG_TO_RAD;
+	float dLon = (lon2 - lon1) * DEG_TO_RAD;
+	// Convert the latitudes to radians
+	float lat1Rad = lat1 * DEG_TO_RAD;
+	float lat2Rad = lat2 * DEG_TO_RAD;
+	// Calculate the haversine of the central angle: a = sin^2(dLat/2) + sin^2(dLon/2) * cos(lat1) * cos(lat2)
+	float harvestineAngle = pow(sin(dLat / 2), 2) + pow(sin(dLon / 2), 2) * cos(lat1Rad) * cos(lat2Rad);
+	// Calculate the distance: distance = 2 * arcsin(sqrt(harvestineAngle))
+	float distance = 2 * asin(sqrt(harvestineAngle));
+	// Return the distance in km
+	return R * distance;
+}
+
