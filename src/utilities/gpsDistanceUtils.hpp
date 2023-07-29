@@ -13,12 +13,11 @@
 #ifndef GPSDISTANCEUTILS_HPP
 #define GPSDISTANCEUTILS_HPP
 
-float getDistanceNaive(float lat1, float lon1, float lat2, float lon2);
+#include "dataGPSStruct.hpp"
 
-float getDistanceHaversine(float lat1, float lon1, float lat2, float lon2);
-
-float getDistanceVincenty(float lat1, float lon1, float lat2, float lon2);
-
-float getDistanceSphericalLawOfCosines(float lat1, float lon1, float lat2, float lon2);
+float getDistanceNaive(struct gpsPoint p1, struct gpsPoint p2);
+float getDistanceHaversine(struct gpsPoint p1, struct gpsPoint p2);
+float getDistanceVincenty(struct gpsPoint p1, struct gpsPoint p2);
+float getDistanceSphericalLawOfCosines(struct gpsPoint p1, struct gpsPoint p2);
 
 #endif
