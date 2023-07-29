@@ -1,5 +1,5 @@
 /**
- * @file gpsDistanceUtils.cpp
+ * @file gpsDistanceUtils.hpp
  * @author Alessandro Benetton (aleben98@gmail.com)
  * @author Crespan Lorenzo (lorenzo.crespan@gmail.com)
  * @brief 
@@ -12,6 +12,13 @@
 
 #ifndef GPSDISTANCEUTILS_HPP
 #define GPSDISTANCEUTILS_HPP
-#include <Arduino.h>
+
+float getDistanceNaive(float lat1, float lon1, float lat2, float lon2);
+
+float getDistanceHaversine(float lat1, float lon1, float lat2, float lon2);
+
+float getDistanceVincenty(float lat1, float lon1, float lat2, float lon2);
+
+float getDistanceSphericalLawOfCosines(float lat1, float lon1, float lat2, float lon2);
 
 #endif

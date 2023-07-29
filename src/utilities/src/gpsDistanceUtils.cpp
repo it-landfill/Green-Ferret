@@ -11,6 +11,7 @@
  */
 
 #include "../gpsDistanceUtils.hpp"
+#include <math.h>
 
 // Earth's radius in km 
 #define R 6371
