@@ -13,7 +13,13 @@
 #ifndef DATAGPSSTRUCT_HPP
 #define DATAGPSSTRUCT_HPP
 
-// GPS Point struct to store the last point
+/**
+ * @brief A struct to store GPS data
+ * 
+ * @param lat The latitude
+ * @param lon The longitude
+ * @param timestamp The timestamp in epoch format
+ */
 struct gpsPoint {
     float lat;
     float lon;

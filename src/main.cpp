@@ -97,7 +97,6 @@ void loop() {
 
 	if (sendConditionSet) {
 		// Publish based on distance travelled since last publish
-		
 		// Based on the distance method set, calculate the distance between the 
 		// last point and the new point with the selected method.
 		switch (distanceMethodSet) {
@@ -131,7 +130,7 @@ void loop() {
 			delay(timeToSleep);
 		}
 	} else {
-		// Publish based on time
+		// Publish based on time elapsed since last publish
 		if (counter++ == 5) {
 			// Every minute
 			float pressure = bmp280ReadPressure();
