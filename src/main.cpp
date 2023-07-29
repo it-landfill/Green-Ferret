@@ -24,7 +24,6 @@
 
 // #define LOCAL_DEBUG
 
-
 // Set to 1 to publish based on distance, 0 to publish based on time
 #define sendConditionSet 0
 
@@ -91,14 +90,14 @@ void loop() {
 
 	// Get latitute and longitude from GPS
 	getLocation();
+	// Get the new point
+	struct gpsPoint point = getNewPoint();
 
 	char* jsonMsg = NULL;
 
 	if (sendConditionSet) {
 		// Publish based on distance travelled since last publish
 		
-		// Get the new point
-		struct gpsPoint point = getNewPoint();
 		// Based on the distance method set, calculate the distance between the 
 		// last point and the new point with the selected method.
 		switch (distanceMethodSet) {
@@ -136,10 +135,10 @@ void loop() {
 		if (counter++ == 5) {
 			// Every minute
 			float pressure = bmp280ReadPressure();
-			// jsonMsg = serializeSensorData(&temperature, &humidity, &pressure, &lat, &lon, &aqi, &tvoc, &eco2);
+			jsonMsg = serializeSensorData(&temperature, &humidity, &pressure, &point.lat, &point.lon, &aqi, &tvoc, &eco2);
 			counter = 0;
 		} else {
-			// jsonMsg = serializeSensorData(&temperature, &humidity, NULL, &lat, &lon, &aqi, &tvoc, &eco2);
+			jsonMsg = serializeSensorData(&temperature, &humidity, NULL, &point.lat, &point.lon, &aqi, &tvoc, &eco2);
 		}
 		logInfof("MAIN", "Json to be pubblish: %s", jsonMsg);
 #ifndef LOCAL_DEBUG
