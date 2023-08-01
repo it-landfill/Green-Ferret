@@ -10,6 +10,8 @@
 #include "sensors/bmp280.hpp"
 #include "sensors/ens160.hpp"
 
+#include "settings/settings.hpp"
+
 // Switch between WROOM32 pin and HELTEC pin
 #ifdef WROOM32
 #define SDA_PIN 21
@@ -21,13 +23,20 @@
 
 //#define LOCAL_DEBUG
 
+Settings settings = {
+	.protocol = NONE,
+	.trigger = -1,
+	.distance = -1,
+	.time = -1
+};
+
 void setup(){
 	Serial.begin(115200);
 	logInfo("MAIN", "Starting Setup");
 
 	#ifndef LOCAL_DEBUG
 	wifiSetup(true);
-	dataUploadSetup(MQTT);
+	dataUploadSetup(&settings, MQTT);
 	#else
 	logWarning("MAIN", "Local Debug Enabled");
 	#endif

@@ -12,22 +12,15 @@
 #ifndef DATAUPLOAD_HPP
 #define DATAUPLOAD_HPP
 
-/**
- * @brief List of supported protocols.
- * 
- */
-enum DataUploadProtocol {
-	NONE,
-	MQTT,
-	HTTP
-};
+#include "../settings/settings.hpp"
 
 /**
  * @brief Initialize the data uploader.
  * 
  * @param protocol The protocol to use
  */
-void dataUploadSetup(enum DataUploadProtocol protocol = MQTT);
+ 
+void dataUploadSetup(Settings* settings, enum DataUploadProtocol protocol = MQTT);
 
 /**
  * @brief Publish a message using the selected protocol.

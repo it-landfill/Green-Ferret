@@ -18,11 +18,11 @@
 
 enum DataUploadProtocol dataUploadProtocol = NONE;
 
-void dataUploadSetup(enum DataUploadProtocol protocol) {
+void dataUploadSetup(Settings* settings, enum DataUploadProtocol protocol) {
 	logDebugf("DataUploader", "Initializing data uploader with protocol %d.", protocol);
 
 	// Init MQTT client (This is done regardless of the protocol since MQTT is always needed for message reception)
-	mqttSetup();
+	mqttSetup(settings);
 	mqttConnect();
 
 	// Initialize HTTP client (but don't connect yet)

@@ -12,12 +12,13 @@
 
 #ifndef MQTT_HPP
 #define MQTT_HPP
+#include "../settings/settings.hpp"
 /**
  * @brief Setup MQTT connection.
  * Set the broker address and port, the client ID and the topic.
  * 
  */
-void mqttSetup();
+void mqttSetup(Settings *set);
 /**
  * @brief Connect to the MQTT broker.
  * 
