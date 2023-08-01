@@ -27,7 +27,7 @@ void setup(){
 
 	#ifndef LOCAL_DEBUG
 	wifiSetup(true);
-	dataUploadSetup(HTTP);
+	dataUploadSetup(MQTT);
 	#else
 	logWarning("MAIN", "Local Debug Enabled");
 	#endif

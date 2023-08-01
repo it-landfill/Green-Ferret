@@ -13,6 +13,7 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <PubSubClient.h>
+#include <ArduinoJson.h>
 
 #include "../MQTT.hpp"
 
@@ -33,20 +34,46 @@ const char *sensorDataTopic;
 WiFiClient client;
 PubSubClient clientMQTT(client);
 
+void parseMessage(char* json) {
+    StaticJsonDocument<64> doc;
+    DeserializationError error = deserializeJson(doc, json);
+
+    if (error) {
+        Serial.print(F("deserializeJson() failed: "));
+        Serial.println(error.f_str());
+        return;
+    }
+
+	int protocol = doc["protocol"]; // 1
+	int trigger = doc["trigger"]; // 1
+	int distance = doc["distance"]; // 5
+	int time = doc["time"]; // 10
+
+	logDebugf(MODULE_NAME, "Protocol: %d", protocol);
+	logDebugf(MODULE_NAME, "Trigger: %d", trigger);
+	logDebugf(MODULE_NAME, "Distance: %d", distance);
+	logDebugf(MODULE_NAME, "Time: %d", time);
+}
+
 /**
  * @brief Callback function for MQTT messages.
- * 
+ *
  * @param topic The topic of the message
  * @param payload The message
  * @param length The length of the message
  */
 void callback(char* topic, byte* payload, unsigned int length) {
-	logDebugf(MODULE_NAME, "Message arrived: %f", payload);
+	char* p = (char*)malloc(length + 1);
+	memcpy(p, payload, length);	
+	p[length] = '\0';
+	logDebugf(MODULE_NAME, "Message arrived at topic %s: %s\n", topic, p);
+	parseMessage(p);
+	free(p);
 }
 
 /**
  * @brief Generate the configuration topic.
- * 
+ *
  * @return char* The configuration topic
  */
 char* genConfigTopic() {
@@ -57,7 +84,7 @@ char* genConfigTopic() {
 
 /**
  * @brief Set the Sensor Data Topic.
- * 
+ *
  */
 void setSensorDataTopic() {
 	if (sensorDataTopic != NULL) return;
@@ -79,7 +106,7 @@ void mqttSetup() {
 
 /**
  * @brief Subscribe to the given topics.
- * 
+ *
  * @param topics List of topics to subscribe to
  */
 void mqttSubscribe(char* topics[]) {
@@ -123,6 +150,6 @@ bool mqttPublishSensorData(char *payload) {
 	}
 
 	bool result = clientMQTT.publish(sensorDataTopic, payload);
-	clientMQTT.loop();
+	clientMQTT.loop(); // FIXME: This should be called in the main loop otherwise the connection will be lost (timeout)
 	return result;
 }
