@@ -35,15 +35,20 @@ WiFiClient client;
 PubSubClient clientMQTT(client);
 Settings *settingsRef = NULL;
 
+/**
+ * @brief Parse received config and update settings.
+ *
+ * @param json
+ */
 void parseMessage(char* json) {
-    StaticJsonDocument<64> doc;
-    DeserializationError error = deserializeJson(doc, json);
+	StaticJsonDocument<64> doc;
+	DeserializationError error = deserializeJson(doc, json);
 
-    if (error) {
-        Serial.print(F("deserializeJson() failed: "));
-        Serial.println(error.f_str());
-        return;
-    }
+	if (error) {
+		Serial.print(F("deserializeJson() failed: "));
+		Serial.println(error.f_str());
+		return;
+	}
 
 	int protocol = doc["protocol"]; // 1
 	int trigger = doc["trigger"]; // 1
@@ -69,7 +74,7 @@ void parseMessage(char* json) {
 	settingsRef->distance = distance;
 	settingsRef->time = time;
 
-
+	logDebug(MODULE_NAME, "New settings:");
 	logDebugf(MODULE_NAME, "Protocol: %d", protocol);
 	logDebugf(MODULE_NAME, "Protocol enum: %d", static_cast<DataUploadProtocol>(protocol));
 	logDebugf(MODULE_NAME, "Trigger: %d", trigger);
@@ -85,12 +90,34 @@ void parseMessage(char* json) {
  * @param length The length of the message
  */
 void callback(char* topic, byte* payload, unsigned int length) {
-	char* p = (char*)malloc(length + 1);
-	memcpy(p, payload, length);	
-	p[length] = '\0';
-	logDebugf(MODULE_NAME, "Message arrived at topic %s: %s\n", topic, p);
-	parseMessage(p);
-	free(p);
+	// Config topic should be CFG/<esp32ID>/Config (CFG/A49879286F24/Config)
+
+	char * pch;
+	// Strtok splits a string into tokens with the specified divider. https://cplusplus.com/reference/cstring/strtok/
+	pch = strtok (topic,"/");
+	if (pch != NULL && strcmp(pch, "CFG") != 0) {
+		logWarningf(MODULE_NAME, "Received message on topic %s, but expected CFG", topic);
+		return;
+	}
+
+	// Calling strtok with NULL returns the next token in the string. The second token should be ESP ID and we can ignore it since we receive only what we subscribed for.
+	pch = strtok (NULL, "/");
+	if (pch == NULL) {
+		logWarningf(MODULE_NAME, "Received message on topic %s, but expected ESP ID", topic);
+		return;
+	}
+
+	// Third token is the message type. We expect Config.
+	pch = strtok (NULL, "/");
+	if (pch != NULL && strcmp(pch, "Config") == 0) {
+		char* p = (char*)malloc(length + 1);
+		memcpy(p, payload, length);
+		parseMessage(p);
+		free(p);
+	} else {
+		logWarningf(MODULE_NAME, "Received message on topic %s, but expected Config", topic);
+		return;
+	}
 }
 
 /**
@@ -174,6 +201,11 @@ bool mqttPublishSensorData(char *payload) {
 	}
 
 	bool result = clientMQTT.publish(sensorDataTopic, payload);
-	clientMQTT.loop(); // FIXME: This should be called in the main loop otherwise the connection will be lost (timeout)
 	return result;
+}
+
+bool mqttLoop() {
+	if (!clientMQTT.connected()) mqttConnect();
+	clientMQTT.loop();
+	return clientMQTT.connected();
 }

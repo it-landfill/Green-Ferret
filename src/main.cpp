@@ -36,7 +36,8 @@ void setup(){
 
 	#ifndef LOCAL_DEBUG
 	wifiSetup(true);
-	dataUploadSetup(&settings, MQTT);
+	dataUploadSetup(&settings);
+
 	#else
 	logWarning("MAIN", "Local Debug Enabled");
 	#endif
@@ -68,6 +69,8 @@ float generateLongitude() {
 
 void loop(){
 
+	dataUploadLoop();
+	
 	float lat = generateLatitute();
 	float lon = generateLongitude();
 

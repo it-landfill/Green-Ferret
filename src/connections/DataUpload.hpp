@@ -17,10 +17,10 @@
 /**
  * @brief Initialize the data uploader.
  * 
- * @param protocol The protocol to use
+ * @param Settings* Pointer to the settings struct
  */
  
-void dataUploadSetup(Settings* settings, enum DataUploadProtocol protocol = MQTT);
+void dataUploadSetup(Settings* settings);
 
 /**
  * @brief Publish a message using the selected protocol.
@@ -32,10 +32,10 @@ void dataUploadSetup(Settings* settings, enum DataUploadProtocol protocol = MQTT
 bool publishSensorData(char *payload);
 
 /**
- * @brief Change the protocol used to publish messages.
+ * @brief Loop function for the data uploader, this is needed by some protocols.
  * 
- * @param protocol The new protocol to use
+ * @return true 
+ * @return false 
  */
-void changeDataUploadProtocol(enum DataUploadProtocol protocol);
-
+bool dataUploadLoop();
 #endif

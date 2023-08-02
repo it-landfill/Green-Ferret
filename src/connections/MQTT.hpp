@@ -17,6 +17,8 @@
  * @brief Setup MQTT connection.
  * Set the broker address and port, the client ID and the topic.
  * 
+ * //TODO: add settings as parameter in doc
+ * 
  */
 void mqttSetup(Settings *set);
 /**
@@ -34,4 +36,12 @@ bool mqttConnect();
  * @return false Publish failed
  */
 bool mqttPublishSensorData(char *payload);
+
+/**
+ * @brief Loop wrapper function for the MQTT client.
+ * 
+ * @return true 
+ * @return false 
+ */
+bool mqttLoop();
 #endif
