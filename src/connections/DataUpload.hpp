@@ -12,7 +12,7 @@
 #ifndef DATAUPLOAD_HPP
 #define DATAUPLOAD_HPP
 
-#include "../settings/settings.hpp"
+#include "../memory/settings.hpp"
 
 /**
  * @brief Initialize the data uploader.

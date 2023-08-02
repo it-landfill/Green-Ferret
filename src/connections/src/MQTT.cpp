@@ -80,6 +80,8 @@ void parseMessage(char* json) {
 	logDebugf(MODULE_NAME, "Trigger: %d", trigger);
 	logDebugf(MODULE_NAME, "Distance: %d", distance);
 	logDebugf(MODULE_NAME, "Time: %d", time);
+
+	settingsSave();
 }
 
 /**

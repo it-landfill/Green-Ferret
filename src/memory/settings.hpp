@@ -29,5 +29,17 @@ struct Settings {
     int distance;
     int time;
 };
-	
+
+struct ConnectionSettings {
+	char *WiFiSSID;
+	char *WiFiPassword;
+	char *MQTTBroker;
+	char *MQTTUser;
+	char *MQTTPassword;
+};
+
+void settingsInit(Settings *settings);
+void settingsSave();
+void connectionSettingsInit(ConnectionSettings *connSettings);
+void connectionSettingsSave();
 #endif

@@ -10,7 +10,7 @@
 #include "sensors/bmp280.hpp"
 #include "sensors/ens160.hpp"
 
-#include "settings/settings.hpp"
+#include "memory/settings.hpp"
 
 // Switch between WROOM32 pin and HELTEC pin
 #ifdef WROOM32
@@ -30,9 +30,15 @@ Settings settings = {
 	.time = -1
 };
 
+ConnectionSettings connSettings;
+
 void setup(){
 	Serial.begin(115200);
 	logInfo("MAIN", "Starting Setup");
+
+	// Load settings
+	settingsInit(&settings);
+	connectionSettingsInit(&connSettings);
 
 	#ifndef LOCAL_DEBUG
 	wifiSetup(true);
@@ -70,7 +76,7 @@ float generateLongitude() {
 void loop(){
 
 	dataUploadLoop();
-	
+
 	float lat = generateLatitute();
 	float lon = generateLongitude();
 
