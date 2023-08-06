@@ -12,14 +12,19 @@
 
 #ifndef WIFI_HPP
 #define WIFI_HPP
+
+#include "../memory/settings.hpp"
+
+void wifiInit(ConnectionSettings *connectionSettings);
+
 /**
  * @brief Setup WiFi connection.
  *
- * @param rebootOnFail If true, reboot the ESP32 if the connection fails. (Default false)
  * @return true If the connection succedes
  * @return false If the connection fails and rebootOnFail is false
  */
-bool wifiSetup(bool rebootOnFail=false);
+void wifiSetup();
+
 /**
  * @brief Check the WiFi connection status.
  *

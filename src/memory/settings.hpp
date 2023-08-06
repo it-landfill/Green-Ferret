@@ -11,7 +11,7 @@
 
 #ifndef SETTINGS_HPP
 #define SETTINGS_HPP
-
+#include <Arduino.h>
 
 /**
  * @brief List of supported protocols.
@@ -31,11 +31,11 @@ struct Settings {
 };
 
 struct ConnectionSettings {
-	char *WiFiSSID;
-	char *WiFiPassword;
-	char *MQTTBroker;
-	char *MQTTUser;
-	char *MQTTPassword;
+	String mqttBroker;
+	String mqttPort;
+	String mqttUsername;
+	String mqttPassword;
+	uint connFailures;
 };
 
 void settingsInit(Settings *settings);

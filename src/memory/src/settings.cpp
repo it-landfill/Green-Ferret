@@ -61,42 +61,43 @@ void settingsErase() {
 
 void connectionSettingsInit(ConnectionSettings *connSettings) {
 	connSettingsRef = connSettings;
-	if(preferences.begin("connectionSettings", true)){
-		connSettings->WiFiSSID = (char *) preferences.getString("WiFiSSID", "").c_str();
-		connSettings->WiFiPassword = (char *) preferences.getString("WiFiPassword", "").c_str();
-		connSettings->MQTTBroker = (char *) preferences.getString("MQTTBroker", "").c_str();
-		connSettings->MQTTUser = (char *) preferences.getString("MQTTUser", "").c_str();
-		connSettings->MQTTPassword = (char *) preferences.getString("MQTTPassword", "").c_str();
+	if(preferences.begin("connSett", true)){
+		connSettings->mqttBroker = preferences.getString("mqttBroker", "");
+		connSettings->mqttPort = preferences.getString("mqttPort", "");
+		connSettings->mqttUsername = preferences.getString("mqttUsername", "");
+		connSettings->mqttPassword = preferences.getString("mqttPassword", "");
+		connSettings->connFailures = preferences.getUInt("connFailures", 0);
 		preferences.end();
 		logInfo(MODULE_NAME, "Connection settings loaded");
-		logDebugf(MODULE_NAME, "WiFi SSID: %s", connSettings->WiFiSSID);
-		logDebugf(MODULE_NAME, "WiFi Password: %s", connSettings->WiFiPassword);
-		logDebugf(MODULE_NAME, "MQTT Broker: %s", connSettings->MQTTBroker);
-		logDebugf(MODULE_NAME, "MQTT User: %s", connSettings->MQTTUser);
-		logDebugf(MODULE_NAME, "MQTT Password: %s", connSettings->MQTTPassword);
+		logDebugf(MODULE_NAME, "MQTT Broker: %s", connSettings->mqttBroker);
+		logDebugf(MODULE_NAME, "MQTT Port: %s", connSettings->mqttPort);
+		logDebugf(MODULE_NAME, "MQTT Username: %s", connSettings->mqttUsername);
+		logDebugf(MODULE_NAME, "MQTT Password: %s", connSettings->mqttPassword);
+		logDebugf(MODULE_NAME, "Connection failures: %d", connSettings->connFailures);		
 	} else {
 		logWarning(MODULE_NAME, "Connection settings not found");
 	}
 }
 
 void connectionSettingsSave() {
-	preferences.begin("connectionSett", false);
-	preferences.putString("WiFiSSID", connSettingsRef->WiFiSSID);
-	preferences.putString("WiFiPassword", connSettingsRef->WiFiPassword);
-	preferences.putString("MQTTBroker", connSettingsRef->MQTTBroker);
-	preferences.putString("MQTTUser", connSettingsRef->MQTTUser);
-	preferences.putString("MQTTPassword", connSettingsRef->MQTTPassword);
+	preferences.begin("connSett", false);
+	preferences.putString("mqttBroker", connSettingsRef->mqttBroker);
+	preferences.putString("mqttPort", connSettingsRef->mqttPort);
+	preferences.putString("mqttUsername", connSettingsRef->mqttUsername);
+	preferences.putString("mqttPassword", connSettingsRef->mqttPassword);
+	preferences.putUInt("connFailures", connSettingsRef->connFailures);
 	preferences.end();
 	logInfo(MODULE_NAME, "Connection settings saved");
-	logDebugf(MODULE_NAME, "WiFi SSID: %s", connSettingsRef->WiFiSSID);
-	logDebugf(MODULE_NAME, "WiFi Password: %s", connSettingsRef->WiFiPassword);
-	logDebugf(MODULE_NAME, "MQTT Broker: %s", connSettingsRef->MQTTBroker);
-	logDebugf(MODULE_NAME, "MQTT User: %s", connSettingsRef->MQTTUser);
-	logDebugf(MODULE_NAME, "MQTT Password: %s", connSettingsRef->MQTTPassword);
+	logDebugf(MODULE_NAME, "MQTT Broker: %s", connSettingsRef->mqttBroker);
+	logDebugf(MODULE_NAME, "MQTT Port: %s", connSettingsRef->mqttPort);
+	logDebugf(MODULE_NAME, "MQTT Username: %s", connSettingsRef->mqttUsername);
+	logDebugf(MODULE_NAME, "MQTT Password: %s", connSettingsRef->mqttPassword);
+	logDebugf(MODULE_NAME, "Connection failures: %d", connSettingsRef->connFailures);
 }
 
+
 void connectionSettingsErase() {
-	preferences.begin("connectionSett", false);
+	preferences.begin("connSett", false);
 	preferences.clear();
 	preferences.end();
 }

@@ -39,9 +39,13 @@ void setup(){
 	// Load settings
 	settingsInit(&settings);
 	connectionSettingsInit(&connSettings);
+	// Use this to count resets before wifi connection. Rebooting the board 5 times in a row auto triggers WiFiManager	
+	connSettings.connFailures++;
+	connectionSettingsSave();
 
 	#ifndef LOCAL_DEBUG
-	wifiSetup(true);
+	wifiInit(&connSettings);
+	wifiSetup();
 	dataUploadSetup(&settings);
 
 	#else
