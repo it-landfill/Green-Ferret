@@ -25,11 +25,11 @@ Settings* sett;
  * 
  * @param settings The settings struct as defined in settings.hpp
  */
-void dataUploadSetup(Settings* settings) {
+void dataUploadSetup(Settings* settings, ConnectionSettings *connSettings) {
 	logDebugf(MODULE_NAME, "Initializing data uploader.");
 
 	// Init MQTT client (This is done regardless of the protocol since MQTT is always needed for message reception)
-	mqttSetup(settings);
+	mqttSetup(settings, connSettings);
 	mqttConnect();
 
 	// Initialize HTTP client (but don't connect yet)

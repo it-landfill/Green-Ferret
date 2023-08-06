@@ -20,7 +20,7 @@
  * @param Settings* Pointer to the settings struct
  */
  
-void dataUploadSetup(Settings* settings);
+void dataUploadSetup(Settings* settings, ConnectionSettings *connSettings);
 
 /**
  * @brief Publish a message using the selected protocol.

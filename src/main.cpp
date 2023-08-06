@@ -46,7 +46,7 @@ void setup(){
 	#ifndef LOCAL_DEBUG
 	wifiInit(&connSettings);
 	wifiSetup();
-	dataUploadSetup(&settings);
+	dataUploadSetup(&settings, &connSettings);
 
 	#else
 	logWarning("MAIN", "Local Debug Enabled");

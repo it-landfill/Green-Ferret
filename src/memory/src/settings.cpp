@@ -63,14 +63,14 @@ void connectionSettingsInit(ConnectionSettings *connSettings) {
 	connSettingsRef = connSettings;
 	if(preferences.begin("connSett", true)){
 		connSettings->mqttBroker = preferences.getString("mqttBroker", "");
-		connSettings->mqttPort = preferences.getString("mqttPort", "");
+		connSettings->mqttPort = preferences.getUInt("mqttPort", 1883);
 		connSettings->mqttUsername = preferences.getString("mqttUsername", "");
 		connSettings->mqttPassword = preferences.getString("mqttPassword", "");
 		connSettings->connFailures = preferences.getUInt("connFailures", 0);
 		preferences.end();
 		logInfo(MODULE_NAME, "Connection settings loaded");
 		logDebugf(MODULE_NAME, "MQTT Broker: %s", connSettings->mqttBroker);
-		logDebugf(MODULE_NAME, "MQTT Port: %s", connSettings->mqttPort);
+		logDebugf(MODULE_NAME, "MQTT Port: %d", connSettings->mqttPort);
 		logDebugf(MODULE_NAME, "MQTT Username: %s", connSettings->mqttUsername);
 		logDebugf(MODULE_NAME, "MQTT Password: %s", connSettings->mqttPassword);
 		logDebugf(MODULE_NAME, "Connection failures: %d", connSettings->connFailures);		
@@ -82,14 +82,14 @@ void connectionSettingsInit(ConnectionSettings *connSettings) {
 void connectionSettingsSave() {
 	preferences.begin("connSett", false);
 	preferences.putString("mqttBroker", connSettingsRef->mqttBroker);
-	preferences.putString("mqttPort", connSettingsRef->mqttPort);
+	preferences.putUInt("mqttPort", connSettingsRef->mqttPort);
 	preferences.putString("mqttUsername", connSettingsRef->mqttUsername);
 	preferences.putString("mqttPassword", connSettingsRef->mqttPassword);
 	preferences.putUInt("connFailures", connSettingsRef->connFailures);
 	preferences.end();
 	logInfo(MODULE_NAME, "Connection settings saved");
 	logDebugf(MODULE_NAME, "MQTT Broker: %s", connSettingsRef->mqttBroker);
-	logDebugf(MODULE_NAME, "MQTT Port: %s", connSettingsRef->mqttPort);
+	logDebugf(MODULE_NAME, "MQTT Port: %d", connSettingsRef->mqttPort);
 	logDebugf(MODULE_NAME, "MQTT Username: %s", connSettingsRef->mqttUsername);
 	logDebugf(MODULE_NAME, "MQTT Password: %s", connSettingsRef->mqttPassword);
 	logDebugf(MODULE_NAME, "Connection failures: %d", connSettingsRef->connFailures);

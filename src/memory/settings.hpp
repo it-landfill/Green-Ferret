@@ -32,7 +32,7 @@ struct Settings {
 
 struct ConnectionSettings {
 	String mqttBroker;
-	String mqttPort;
+	uint mqttPort;
 	String mqttUsername;
 	String mqttPassword;
 	uint connFailures;

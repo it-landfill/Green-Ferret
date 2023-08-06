@@ -30,6 +30,7 @@ WiFiManagerParameter custom_mqtt_port("port", "mqtt port", "1883", 6);
 WiFiManagerParameter custom_mqtt_username("username", "mqtt username", "IoT", 40);
 WiFiManagerParameter custom_mqtt_password("password", "mqtt password", "iot2023", 40);
 
+//TODO: Blink led when in config mode
 
 //callback notifying us of the need to save config
 void saveConfigCallback () {
@@ -64,12 +65,14 @@ void wifiSetup(){
 
 	if (connectionSettingsRef->connFailures > 5) {
 		logError(MODULE_NAME, "Board has failed to connect or has been rebooted 5 times. Forcing WiFiManager");
+		connectionSettingsRef->connFailures = 0;
+		connectionSettingsSave();
 		if (!wifiManager.startConfigPortal(getEsp32ID(), AP_PW)) {
 			logError(MODULE_NAME, "failed to connect and hit timeout. Restarting");
 			delay(3000);
 			//reset and try again, or maybe put it to deep sleep
 			ESP.restart();
-		} else connectionSettingsRef->connFailures = 0;
+		}
 	}
 
 	logInfo(MODULE_NAME, "Connecting to WiFi in 2 seconds");
