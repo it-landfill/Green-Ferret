@@ -128,11 +128,11 @@ void setSensorDataTopic() {
 	sensorDataTopic = topic;
 }
 
-void mqttSetup(Settings *settings, ConnectionSettings *connSettingsRef1) {
+void mqttSetup(Settings *settings, ConnectionSettings *connSettingsRef) {
 	logDebug(MODULE_NAME, "Setting up MQTT");
 
 	settingsRef = settings;
-	connSettingsRef1 = connSettingsRef1;
+	connSettingsRef1 = connSettingsRef;
 
 	setSensorDataTopic();
 
@@ -161,6 +161,11 @@ bool mqttConnect() {
 		logDebug(MODULE_NAME, "Connecting to MQTT broker");
 
 		// Connect to MQTT broker
+		if (connSettingsRef1 == NULL) {
+			logError(MODULE_NAME, "Connection settings not set");
+			return false;
+		}
+
 		if (clientMQTT.connect(clientID, connSettingsRef1->mqttUsername.c_str(), connSettingsRef1->mqttPassword.c_str())) {
 			logDebug(MODULE_NAME, "Connected to MQTT broker");
 

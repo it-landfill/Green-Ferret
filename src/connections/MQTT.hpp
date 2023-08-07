@@ -20,7 +20,7 @@
  * //TODO: add settings as parameter in doc
  * 
  */
-void mqttSetup(Settings *set, ConnectionSettings *connSet);
+void mqttSetup(Settings *set, ConnectionSettings *connSettingsRef);
 /**
  * @brief Connect to the MQTT broker.
  * 
