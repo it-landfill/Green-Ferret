@@ -13,12 +13,13 @@
 #ifndef MQTT_HPP
 #define MQTT_HPP
 #include "../memory/settings.hpp"
+
 /**
  * @brief Setup MQTT connection.
  * Set the broker address and port, the client ID and the topic.
  * 
- * //TODO: add settings as parameter in doc
- * 
+ * @param set Settings struct
+ * @param connSettingsRef ConnectionSettings struct
  */
 void mqttSetup(Settings *set, ConnectionSettings *connSettingsRef);
 /**

@@ -25,10 +25,10 @@
 WiFiManager wifiManager;
 ConnectionSettings *connectionSettingsRef;
 
-WiFiManagerParameter custom_mqtt_broker("server", "mqtt server", "pi3aleben", 40);
+WiFiManagerParameter custom_mqtt_broker("server", "mqtt server", "", 40);
 WiFiManagerParameter custom_mqtt_port("port", "mqtt port", "1883", 6);
-WiFiManagerParameter custom_mqtt_username("username", "mqtt username", "IoT", 40);
-WiFiManagerParameter custom_mqtt_password("password", "mqtt password", "iot2023", 40);
+WiFiManagerParameter custom_mqtt_username("username", "mqtt username", "", 40);
+WiFiManagerParameter custom_mqtt_password("password", "mqtt password", "", 40);
 
 //TODO: Blink led when in config mode
 

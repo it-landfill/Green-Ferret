@@ -18,46 +18,7 @@
 #define MODULE_NAME "Settings"
 
 Preferences preferences;
-Settings *settingsRef1 = NULL;
 ConnectionSettings *connSettingsRef = NULL;
-
-void settingsInit(Settings *settings) {
-	settingsRef1 = settings;
-	if(preferences.begin("settings", true)) {
-		settings->protocol = (DataUploadProtocol) preferences.getUInt("protocol", 0);
-		settings->trigger = preferences.getUInt("trigger", 0);
-		settings->distance = preferences.getUInt("distance", 0);
-		settings->time = preferences.getUInt("time", 0);
-		preferences.end();
-		logInfo(MODULE_NAME, "Settings loaded");
-		logDebugf(MODULE_NAME, "Protocol: %d", settings->protocol);
-		logDebugf(MODULE_NAME, "Trigger: %d", settings->trigger);
-		logDebugf(MODULE_NAME, "Distance: %d", settings->distance);
-		logDebugf(MODULE_NAME, "Time: %d", settings->time);
-	} else {
-		logWarning(MODULE_NAME, "Settings not found");
-	}
-}
-
-void settingsSave() {
-	preferences.begin("settings", false);
-	preferences.putUInt("protocol", settingsRef1->protocol);
-	preferences.putUInt("trigger", settingsRef1->trigger);
-	preferences.putUInt("distance", settingsRef1->distance);
-	preferences.putUInt("time", settingsRef1->time);
-	preferences.end();
-	logInfo(MODULE_NAME, "Settings saved");
-	logDebugf(MODULE_NAME, "Protocol: %d", settingsRef1->protocol);
-	logDebugf(MODULE_NAME, "Trigger: %d", settingsRef1->trigger);
-	logDebugf(MODULE_NAME, "Distance: %d", settingsRef1->distance);
-	logDebugf(MODULE_NAME, "Time: %d", settingsRef1->time);
-}
-
-void settingsErase() {
-	preferences.begin("settings", false);
-	preferences.clear();
-	preferences.end();
-}
 
 void connectionSettingsInit(ConnectionSettings *connSettings) {
 	connSettingsRef = connSettings;

@@ -23,6 +23,10 @@ enum DataUploadProtocol {
 	HTTP
 };
 
+/**
+ * @brief Settings struct. Note that this is not saved in EEPROM. Must be received every restart from the server.
+ * 
+ */
 struct Settings {
     enum DataUploadProtocol protocol;
     int trigger;
@@ -38,8 +42,6 @@ struct ConnectionSettings {
 	uint connFailures;
 };
 
-void settingsInit(Settings *settings);
-void settingsSave();
 void connectionSettingsInit(ConnectionSettings *connSettings);
 void connectionSettingsSave();
 #endif

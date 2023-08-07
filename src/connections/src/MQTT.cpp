@@ -57,14 +57,12 @@ void parseMessage(char* json) {
 	settingsRef->distance = distance;
 	settingsRef->time = time;
 
-	logDebug(MODULE_NAME, "New settings:");
+	logDebug(MODULE_NAME, "Settings received:");
 	logDebugf(MODULE_NAME, "Protocol: %d", protocol);
 	logDebugf(MODULE_NAME, "Protocol enum: %d", static_cast<DataUploadProtocol>(protocol));
 	logDebugf(MODULE_NAME, "Trigger: %d", trigger);
 	logDebugf(MODULE_NAME, "Distance: %d", distance);
 	logDebugf(MODULE_NAME, "Time: %d", time);
-
-	settingsSave();
 }
 
 /**
