@@ -52,6 +52,10 @@ void wifiInit(ConnectionSettings *connectionSettings) {
 	wifiManager.addParameter(&custom_mqtt_port);
 	wifiManager.addParameter(&custom_mqtt_username);
 	wifiManager.addParameter(&custom_mqtt_password);
+	custom_mqtt_broker.setValue(connectionSettings->mqttBroker.c_str(), connectionSettings->mqttBroker.length());
+	custom_mqtt_port.setValue(String(connectionSettings->mqttPort).c_str(), String(connectionSettings->mqttPort).length());
+	custom_mqtt_username.setValue(connectionSettings->mqttUsername.c_str(), connectionSettings->mqttUsername.length());
+	custom_mqtt_password.setValue(connectionSettings->mqttPassword.c_str(), connectionSettings->mqttPassword.length());
 
 	// set dark theme
 	wifiManager.setClass("invert");
