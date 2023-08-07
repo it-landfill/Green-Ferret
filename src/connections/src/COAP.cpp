@@ -21,9 +21,9 @@
 
 #define MODULE_NAME "COAP"
 
-const IPAddress coapServerAddress = IPAddress(192,168,1,18);
+const IPAddress coapServerAddress = IPAddress(192,168,1,18); //TODO: get from settings
 const char *coapEndpoint = NULL;
-const int coapPort = 5683;
+const int coapPort = 5683; //TODO: get from settings
 
 // UDP and CoAP class
 WiFiUDP Udp;
