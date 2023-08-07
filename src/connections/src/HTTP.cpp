@@ -25,7 +25,7 @@ const char *httpAddress = NULL;
 void httpSetServerAddress() {
 
 	// HTTP Server configuration
-	const char serverBaseAddress[] = "http://pi3aleben:5000/telemetry";
+	const char serverBaseAddress[] = "http://pi3aleben:5000/telemetry"; //TODO: Get this from settings
 	const char group[] = "mobile-sensors";
 
 	if (httpAddress != NULL) {
