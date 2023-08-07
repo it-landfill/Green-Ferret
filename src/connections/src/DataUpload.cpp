@@ -16,25 +16,47 @@
 #include "../MQTT.hpp"
 #include "../HTTP.hpp"
 
-enum DataUploadProtocol dataUploadProtocol = NONE;
+#define MODULE_NAME "DataUploader"
 
-void dataUploadSetup(enum DataUploadProtocol protocol) {
-	logDebugf("DataUploader", "Initializing data uploader with protocol %d.", protocol);
+Settings* sett;
+
+/**
+ * @brief Initialize the data uploader and wait for MQTT config reception.
+ * 
+ * @param settings The settings struct as defined in settings.hpp
+ */
+void dataUploadSetup(Settings* settings, ConnectionSettings *connSettings) {
+	logDebugf(MODULE_NAME, "Initializing data uploader.");
 
 	// Init MQTT client (This is done regardless of the protocol since MQTT is always needed for message reception)
-	mqttSetup();
+	mqttSetup(settings, connSettings);
 	mqttConnect();
 
 	// Initialize HTTP client (but don't connect yet)
 	httpSetup();
 
+	// Busy waiting to receive config from mqtt
+	while (settings->protocol == NONE) {
+		mqttLoop();
+		logInfo(MODULE_NAME, "Waiting for config from MQTT...\tSleeping for 1 second.");
+		delay(1000);
+	}
+
 	// Set the protocol
-	dataUploadProtocol = protocol;
+	sett = settings;
 }
 
+bool dataUploadLoop() {
+	switch (sett->protocol) {
+		case MQTT:
+			return mqttLoop();
+		default:
+			return true;
+	}
+}
 
 bool publishSensorData(char *payload){
-	switch (dataUploadProtocol) {
+	switch (sett->protocol) {
 		case MQTT:
 			return mqttPublishSensorData(payload);
 		case HTTP:
@@ -42,8 +64,4 @@ bool publishSensorData(char *payload){
 		default:
 			return false;
 	}
-}
-
-void changeDataUploadProtocol(enum DataUploadProtocol protocol) {
-	dataUploadProtocol = protocol;
 }

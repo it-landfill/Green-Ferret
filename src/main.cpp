@@ -10,6 +10,8 @@
 #include "sensors/bmp280.hpp"
 #include "sensors/ens160.hpp"
 
+#include "memory/settings.hpp"
+
 // Switch between WROOM32 pin and HELTEC pin
 #ifdef WROOM32
 #define SDA_PIN 21
@@ -21,13 +23,30 @@
 
 //#define LOCAL_DEBUG
 
+Settings settings = {
+	.protocol = NONE,
+	.trigger = -1,
+	.distance = -1,
+	.time = -1
+};
+
+ConnectionSettings connSettings;
+
 void setup(){
 	Serial.begin(115200);
 	logInfo("MAIN", "Starting Setup");
 
+	// Load settings
+	connectionSettingsInit(&connSettings);
+	// Use this to count resets before wifi connection. Rebooting the board 5 times in a row auto triggers WiFiManager	
+	connSettings.connFailures++;
+	connectionSettingsSave();
+
 	#ifndef LOCAL_DEBUG
-	wifiSetup(true);
-	dataUploadSetup(HTTP);
+	wifiInit(&connSettings);
+	wifiSetup();
+	dataUploadSetup(&settings, &connSettings);
+
 	#else
 	logWarning("MAIN", "Local Debug Enabled");
 	#endif
@@ -58,6 +77,8 @@ float generateLongitude() {
 }
 
 void loop(){
+
+	dataUploadLoop();
 
 	float lat = generateLatitute();
 	float lon = generateLongitude();

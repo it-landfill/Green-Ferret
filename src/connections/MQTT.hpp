@@ -12,12 +12,16 @@
 
 #ifndef MQTT_HPP
 #define MQTT_HPP
+#include "../memory/settings.hpp"
+
 /**
  * @brief Setup MQTT connection.
  * Set the broker address and port, the client ID and the topic.
  * 
+ * @param set Settings struct
+ * @param connSettingsRef ConnectionSettings struct
  */
-void mqttSetup();
+void mqttSetup(Settings *set, ConnectionSettings *connSettingsRef);
 /**
  * @brief Connect to the MQTT broker.
  * 
@@ -33,4 +37,12 @@ bool mqttConnect();
  * @return false Publish failed
  */
 bool mqttPublishSensorData(char *payload);
+
+/**
+ * @brief Loop wrapper function for the MQTT client.
+ * 
+ * @return true 
+ * @return false 
+ */
+bool mqttLoop();
 #endif
