@@ -6,10 +6,12 @@
 #include "utilities/loggerLib.hpp"
 #include "utilities/JSONUtils.hpp"
 #include "utilities/gpsDistanceUtils.hpp"
+#include "utilities/dataGPSStruct.hpp"
 
 #include "sensors/aht20.hpp"
 #include "sensors/bmp280.hpp"
 #include "sensors/ens160.hpp"
+#include "sensors/gps.hpp"
 
 #include "memory/settings.hpp"
 
@@ -90,6 +92,13 @@ void setup(){
 	ens160Setup(aht20GetTemperature(), aht20GetHumidity());
 	bmp280Setup();
 
+	// GPS setup
+	gpsSetup();
+
+	// TODO: Create cpp file for settings
+	// TODO: Get sendConditionSet from MQTT broker
+	logInfof("SETTINGS", "Send condition set to %d", sendConditionSet);
+
 	logInfo("MAIN", "Setup Complete");
 }
 
@@ -121,62 +130,56 @@ void loop() {
 	int tvoc = ens160GetTVOC();
 	int eco2 = ens160GetECO2();
 
-	// Serialize the data
+	// Get latitute and longitude from GPS
+	getLocation();
+	// Get the new point
+	struct gpsPoint point = getNewPoint();
+
 	char* jsonMsg = NULL;
 
 	if (sendConditionSet) {
-
-		// Publish based on distance
-
-		// Create a new point
-		// TODO: Use the GPS module to get the position.
-		struct gpsPoint newPoint = { lat, lon, millis() };
-
+		// Publish based on distance travelled since last publish
+		// Based on the distance method set, calculate the distance between the 
+		// last point and the new point with the selected method.
 		switch (distanceMethodSet) {
 			case 0:
-				distance = getDistanceNaive(lastPoint.lat, lastPoint.lon, newPoint.lat, newPoint.lon);
+				distance = getDistanceNaive(getLastPoint(), getNewPoint());
 				break;
 			case 1:
-				distance = getDistanceHaversine(lastPoint.lat, lastPoint.lon, newPoint.lat, newPoint.lon);
+				distance = getDistanceNaive(getLastPoint(), getNewPoint());
 				break;
 			case 2:
-				distance = getDistanceVincenty(lastPoint.lat, lastPoint.lon, newPoint.lat, newPoint.lon);
+				distance = getDistanceVincenty(getLastPoint(), getNewPoint());
 				break;
 			case 3:
-				distance = getDistanceSphericalLawOfCosines(lastPoint.lat, lastPoint.lon, newPoint.lat, newPoint.lon);
+				distance = getDistanceSphericalLawOfCosines(getLastPoint(), getNewPoint());
 				break;
 			default:
-				distance = getDistanceHaversine(lastPoint.lat, lastPoint.lon, newPoint.lat, newPoint.lon);
+				distance = getDistanceNaive(getLastPoint(), getNewPoint());
 				break;
 		}
-
-		if (distance > minDistance) {
-			// Update the last point
-			lastPoint.lat = lat;
-			lastPoint.lon = lon;
-			lastPoint.timestamp = millis();
+		// If the distance is greater than the minimum distance or the last point is not set, publish the data.
+		if (distance > getMinDistance() || getLastPoint().timestamp == 0) {
 			// Publish the data
-			jsonMsg = serializeSensorData(&temperature, &humidity, &temperature, &lat, &lon, &aqi, &tvoc, &eco2);
+			jsonMsg = serializeSensorData(&temperature, &humidity, &temperature, &point.lat, &point.lon, &aqi, &tvoc, &eco2);
+			// Update the last point
+			updateGPSPoint();
 		} else {
-			// calculate the mean speed between the two points
-			float speed = getDistanceHaversine(lastPoint.lat, lastPoint.lon, newPoint.lat, newPoint.lon) / (newPoint.timestamp - lastPoint.timestamp);
-			// calculate the time needed to reach the minDistance
-			long timeToReach = minDistance / speed;
-			// calculate the time to sleep
-			long timeToSleep = timeToReach - (millis() - lastPoint.timestamp);
-			logInfof("MAIN", "Sleeping for %ld ms", timeToSleep);
+			// Calculate the time needed to reach the minDistance based on the speed and the distance already travelled
+			long timeToReach = (long)((getMinDistance() - distance) / getSpeed());
+			// Calculate the millis to sleep
+			long timeToSleep = timeToReach + millis();
 			delay(timeToSleep);
 		}
-		
 	} else {
-		// Publish based on time
+		// Publish based on time elapsed since last publish
 		if (counter++ == 5) {
 			// Every minute
 			float pressure = bmp280ReadPressure();
-			jsonMsg = serializeSensorData(&temperature, &humidity, &pressure, &lat, &lon, &aqi, &tvoc, &eco2);
+			jsonMsg = serializeSensorData(&temperature, &humidity, &pressure, &point.lat, &point.lon, &aqi, &tvoc, &eco2);
 			counter = 0;
 		} else {
-			jsonMsg = serializeSensorData(&temperature, &humidity, NULL, &lat, &lon, &aqi, &tvoc, &eco2);
+			jsonMsg = serializeSensorData(&temperature, &humidity, NULL, &point.lat, &point.lon, &aqi, &tvoc, &eco2);
 		}
 		logInfof("MAIN", "Json to be pubblish: %s", jsonMsg);
 #ifndef LOCAL_DEBUG
