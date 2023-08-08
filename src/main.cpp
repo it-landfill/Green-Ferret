@@ -38,6 +38,29 @@ Settings settings = {
 // Counter for sent messages interval.
 int counter = 0;
 
+// GPS Point struct to store the last point
+struct gpsPoint {
+	float lat;
+	float lon;
+	long timestamp;
+};
+// Initialize the last point to 0
+struct gpsPoint lastPoint = {0, 0, 0};
+// Set the minimum distance to 0.1 km (100 m) to publish
+#define minDistance 0.1
+// Set to 1 to publish based on distance, 0 to publish based on time
+#define sendConditionSet 0
+
+// Set the distance method to use
+// 0: Naive
+// 1: Haversine
+// 2: Vincenty
+// 3: Spherical Law of Cosines
+#define distanceMethodSet 0
+
+float distance = 0;
+
+// Setup ESP32 
 void setup(){
 	// Init serial baud rate
 	Serial.begin(115200);
@@ -69,8 +92,6 @@ void setup(){
 
 	logInfo("MAIN", "Setup Complete");
 }
-
-
 
 // Generate a random latitude between 45.6 and 45.7
 float generateLatitute() {
