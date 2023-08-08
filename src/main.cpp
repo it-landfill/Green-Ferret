@@ -14,15 +14,19 @@
 
 // Switch between WROOM32 pin and HELTEC pin
 #ifdef WROOM32
-#define SDA_PIN 21
-#define SCL_PIN 22
+	#define SDA_PIN 21
+	#define SCL_PIN 22
 #else
-#define SDA_PIN 41
-#define SCL_PIN 42
+	#define SDA_PIN 41
+	#define SCL_PIN 42
 #endif
 
 //#define LOCAL_DEBUG
 
+// Connection settings reference.
+ConnectionSettings connSettings;
+
+// Data upload settings reference.
 Settings settings = {
 	.protocol = NONE,
 	.trigger = -1,
@@ -30,28 +34,33 @@ Settings settings = {
 	.time = -1
 };
 
-ConnectionSettings connSettings;
+// Counter for sent messages interval.
+int counter = 0;
 
 void setup(){
+	// Init serial baud rate
 	Serial.begin(115200);
+	
 	logInfo("MAIN", "Starting Setup");
 
-	// Load settings
+	// Load settings from memory and save them.
 	connectionSettingsInit(&connSettings);
-	// Use this to count resets before wifi connection. Rebooting the board 5 times in a row auto triggers WiFiManager	
-	connSettings.connFailures++;
 	connectionSettingsSave();
 
 	#ifndef LOCAL_DEBUG
-	wifiInit(&connSettings);
-	wifiSetup();
-	dataUploadSetup(&settings, &connSettings);
-
+		// Setup connections and data upload
+		wifiInit(&connSettings);
+		wifiSetup();
+		dataUploadSetup(&settings, &connSettings);
 	#else
-	logWarning("MAIN", "Local Debug Enabled");
+		logWarning("MAIN", "Local Debug Enabled");
 	#endif
 
-	// Sensor setup
+
+	// Setup sensors. In order: 
+	// 1. AHT20
+	// 2. ENS160
+	// 3. BMP280
 	Wire.begin(SDA_PIN, SCL_PIN);
 	aht20Setup();
 	ens160Setup(aht20GetTemperature(), aht20GetHumidity());
@@ -60,7 +69,7 @@ void setup(){
 	logInfo("MAIN", "Setup Complete");
 }
 
-int counter = 0;
+
 
 float generateLatitute() {
 	// Between 45.6 and 45.7
