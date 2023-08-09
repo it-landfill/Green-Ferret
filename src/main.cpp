@@ -7,6 +7,7 @@
 #include "utilities/JSONUtils.hpp"
 #include "utilities/gpsDistanceUtils.hpp"
 #include "utilities/dataGPSStruct.hpp"
+#include "utilities/randomGPS.hpp"
 
 #include "sensors/aht20.hpp"
 #include "sensors/bmp280.hpp"
@@ -40,12 +41,6 @@ Settings settings = {
 // Counter for sent messages interval.
 int counter = 0;
 
-// GPS Point struct to store the last point
-struct gpsPoint {
-	float lat;
-	float lon;
-	long timestamp;
-};
 // Initialize the last point to 0
 struct gpsPoint lastPoint = {0, 0, 0};
 // Set the minimum distance to 0.1 km (100 m) to publish
@@ -82,38 +77,18 @@ void setup(){
 		logWarning("MAIN", "Local Debug Enabled");
 	#endif
 
-
 	// Setup sensors. In order: 
 	// 1. AHT20
 	// 2. ENS160
 	// 3. BMP280
+	// 4. GPS
 	Wire.begin(SDA_PIN, SCL_PIN);
 	aht20Setup();
 	ens160Setup(aht20GetTemperature(), aht20GetHumidity());
 	bmp280Setup();
-
-	// GPS setup
 	gpsSetup();
 
-	// TODO: Create cpp file for settings
-	// TODO: Get sendConditionSet from MQTT broker
-	logInfof("SETTINGS", "Send condition set to %d", sendConditionSet);
-
 	logInfo("MAIN", "Setup Complete");
-}
-
-// Generate a random latitude between 45.6 and 45.7
-float generateLatitute() {
-	float lat = 45.6;
-	lat += (float)(rand() % 10000 + 1) / 100000;
-	return lat;
-}
-// Generate a random longitude between 12.2 and 12.3
-float generateLongitude() {
-	// Between 12.2 and 12.3
-	float lon = 12.2;
-	lon += (float)(rand() % 10000 + 1) / 100000;
-	return lon;
 }
 
 void loop() {
