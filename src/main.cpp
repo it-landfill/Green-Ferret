@@ -41,13 +41,7 @@ Settings settings = {
 // Counter for sent messages interval.
 int counter = 0;
 
-// Initialize the last point to 0
-struct gpsPoint lastPoint = {0, 0, 0};
-// Set the minimum distance to 0.1 km (100 m) to publish
-#define minDistance 0.1
-// Set to 1 to publish based on distance, 0 to publish based on time
-#define sendConditionSet 0
-
+// TODO: Add distanceMethodSet to settings
 // Set the distance method to use
 // 0: Naive
 // 1: Haversine
@@ -91,80 +85,57 @@ void setup(){
 	logInfo("MAIN", "Setup Complete");
 }
 
+// Main loop
 void loop() {
 
+	// Mantain the connection with the broker MQTT
 	dataUploadLoop();
 
-	float lat = generateLatitute();
-	float lon = generateLongitude();
-
-	// Get sensor data
+	// Get temperature and pressure from BMP280
 	float temperature = bmp280ReadTemperature();
+	float pressure = bmp280ReadPressure();
+	// Get humidity from AHT20
 	float humidity = aht20GetHumidity();
+	// Get AQI, TVOC and eCO2 from ENS160
 	int aqi = ens160GetAQI();
 	int tvoc = ens160GetTVOC();
 	int eco2 = ens160GetECO2();
-
-	// Get latitute and longitude from GPS
-	getLocation();
-	// Get the new point
+	// Get GPS data
 	struct gpsPoint point = getNewPoint();
 
+	// Init the JSON message to NULL
 	char* jsonMsg = NULL;
 
-	if (sendConditionSet) {
-		// Publish based on distance travelled since last publish
-		// Based on the distance method set, calculate the distance between the 
-		// last point and the new point with the selected method.
-		switch (distanceMethodSet) {
-			case 0:
-				distance = getDistanceNaive(getLastPoint(), getNewPoint());
-				break;
-			case 1:
-				distance = getDistanceNaive(getLastPoint(), getNewPoint());
-				break;
-			case 2:
-				distance = getDistanceVincenty(getLastPoint(), getNewPoint());
-				break;
-			case 3:
-				distance = getDistanceSphericalLawOfCosines(getLastPoint(), getNewPoint());
-				break;
-			default:
-				distance = getDistanceNaive(getLastPoint(), getNewPoint());
-				break;
-		}
-		// If the distance is greater than the minimum distance or the last point is not set, publish the data.
-		if (distance > getMinDistance() || getLastPoint().timestamp == 0) {
-			// Publish the data
+	if (settings.trigger == 0) {
+		// Publish based on distance travelled since last publish.
+		// Based on the distance method set, calculate the distance between the last point and the new point with the selected method.
+		distance = getDistance(static_cast<DistanceMethod>(distanceMethodSet), getLastPoint(), getNewPoint());
+		// If the distance is greater than the minimum distance or the last point is not set, publish the message.
+		if (distance > settings.distance || getLastPoint().timestamp == 0) {
 			jsonMsg = serializeSensorData(&temperature, &humidity, &temperature, &point.lat, &point.lon, &aqi, &tvoc, &eco2);
-			// Update the last point
+			// Update the last point with the new point.
 			updateGPSPoint();
-		} else {
-			// Calculate the time needed to reach the minDistance based on the speed and the distance already travelled
-			long timeToReach = (long)((getMinDistance() - distance) / getSpeed());
-			// Calculate the millis to sleep
-			long timeToSleep = timeToReach + millis();
-			delay(timeToSleep);
 		}
 	} else {
-		// Publish based on time elapsed since last publish
+		// Publish based on time elapsed since last publish.
 		if (counter++ == 5) {
-			// Every minute
-			float pressure = bmp280ReadPressure();
 			jsonMsg = serializeSensorData(&temperature, &humidity, &pressure, &point.lat, &point.lon, &aqi, &tvoc, &eco2);
 			counter = 0;
-		} else {
-			jsonMsg = serializeSensorData(&temperature, &humidity, NULL, &point.lat, &point.lon, &aqi, &tvoc, &eco2);
-		}
-		logInfof("MAIN", "Json to be pubblish: %s", jsonMsg);
-#ifndef LOCAL_DEBUG
-		publishSensorData(jsonMsg);
-#endif
-		free(jsonMsg);
-#ifdef LOCAL_DEBUG
-		delay(1000);
-#else
-		delay(10000); // Sleep for 10 seconds
-#endif
+		} 
 	}
+	// If the condition is not met, publish the message without the pressure.
+	if (jsonMsg == NULL) jsonMsg = serializeSensorData(&temperature, &humidity, NULL, &point.lat, &point.lon, &aqi, &tvoc, &eco2);
+	logInfof("MAIN", "Json to be pubblish: %s", jsonMsg);
+	// Publish the JSON message, if local debug is not enabled.
+	#ifndef LOCAL_DEBUG
+		publishSensorData(jsonMsg);
+	#endif
+	// Free the JSON message
+	free(jsonMsg);
+	// If local debug is enabled, wait 10 seconds before sending another message, otherwise sleep for 1 seconds.
+	#ifdef LOCAL_DEBUG
+		delay(1000);
+	#else
+		delay(10000);
+	#endif	
 }
