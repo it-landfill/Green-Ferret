@@ -12,12 +12,12 @@
 
 #include "Arduino.h"
 #include "WiFi.h"
-#include <WiFiManager.h>          //https://github.com/tzapu/WiFiManager WiFi Configuration Magic
+// https://github.com/tzapu/WiFiManager
+#include <WiFiManager.h>	
 
 #include "../WiFi.hpp"
 #include "../../utilities/loggerLib.hpp"
 #include "../../utilities/boardInfo.hpp"
-#include "../secrets.hpp"
 
 #define MODULE_NAME "WiFi"
 #define AP_PW "password"
@@ -86,7 +86,6 @@ void wifiSetup(){
 	// Connect to WiFi.
 	if (!wifiManager.autoConnect(getEsp32ID(), AP_PW)) {
 		// Should increase connection failures here but since I do it already in main, can skip it.
-		connectionSettingsRef->connFailures += 1;
 		connectionSettingsSave();
 		logError(MODULE_NAME, "Failed to connect and hit timeout. Restarting...");
 		delay(3000);

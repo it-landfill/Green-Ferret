@@ -15,6 +15,8 @@
 
 #include <Arduino.h>
 
+#include "../utilities/gpsDistanceUtils.hpp"
+
 /**
  * @brief List of supported protocols for data upload.
  * 
@@ -33,8 +35,9 @@ enum DataUploadProtocol {
 struct Settings {
     enum DataUploadProtocol protocol;
     int trigger;
-    int distance;
-    int time;
+	enum DistanceMethod distanceMethod;
+	int distance;
+	int time;
 };
 
 /**
