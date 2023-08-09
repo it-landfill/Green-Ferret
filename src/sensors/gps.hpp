@@ -34,17 +34,5 @@ struct gpsPoint getNewPoint();
  * 
  */
 void updateGPSPoint();
-/**
- * @brief Get the speed
- * 
- * @return float The speed in km/h
- */
-float getSpeed();
-/**
- * @brief Get the minimum distance
- * 
- * @return float The minimum distance in km
- */
-float getMinDistance();
 
 #endif

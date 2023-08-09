@@ -23,10 +23,6 @@ TinyGPSPlus gps;
 struct gpsPoint lastPoint = { 0, 0, 0 };
 struct gpsPoint newPoint = { 0, 0, 0 };
 
-
-// Set the minimum distance to 0.1 km (100 m) to publish
-#define minDistance 0.1
-
 void displayInfo() {
 	Serial.print(F("Location: "));
 	if (gps.location.isValid()) {
@@ -109,14 +105,4 @@ void updateGPSPoint() {
 	lastPoint.lat = newPoint.lat;
 	lastPoint.lon = newPoint.lon;
 	lastPoint.timestamp = newPoint.timestamp;
-}
-
-// Get minimum distance to publish
-float getMinDistance() {
-	return minDistance;
-}
-
-// Return the speed in km/h
-float getSpeed() {
-	return gps.speed.kmph();
 }
