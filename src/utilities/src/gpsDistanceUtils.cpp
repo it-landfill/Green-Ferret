@@ -11,6 +11,7 @@
  */
 
 #include "../gpsDistanceUtils.hpp"
+
 #include <math.h>
 
 // Earth's radius in km 
@@ -82,4 +83,20 @@ float getDistanceSphericalLawOfCosines(struct gpsPoint p1, struct gpsPoint p2) {
 	float distance = acos(sin(lat1Rad) * sin(lat2Rad) + cos(lat1Rad) * cos(lat2Rad) * cos(dLon));
 	// Return the distance in km
 	return R * distance;
+}
+
+// Returns the distance between two points using the specified method.
+float getDistance(DistanceMethod method, struct gpsPoint p1, struct gpsPoint p2) {
+	switch (method) {
+	case NAIVE:
+		return getDistanceNaive(p1, p2);
+	case HAVERSINE:
+		return getDistanceHaversine(p1, p2);
+	case VINCENTY:
+		return getDistanceVincenty(p1, p2);
+	case SPHERICALLAWOFCOSINES:
+		return getDistanceSphericalLawOfCosines(p1, p2);
+	default:
+		return getDistanceNaive(p1, p2);
+	}
 }

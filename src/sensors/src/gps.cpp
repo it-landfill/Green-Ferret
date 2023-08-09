@@ -100,6 +100,7 @@ struct gpsPoint getLastPoint() {
 
 // Return the new gps point
 struct gpsPoint getNewPoint() {
+	getLocation();
 	return newPoint;
 }
 
