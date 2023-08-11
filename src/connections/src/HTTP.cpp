@@ -20,26 +20,29 @@
 
 #define MODULE_NAME "HTTP"
 
-// HTTP Server configuration
-const char serverBaseAddress[] = "http://pi3aleben:5000/telemetry";
-const char group[] = "mobile-sensors";
-const char *serverAddress = NULL;
+const char *httpAddress = NULL;
 
-void setServerAddress() {
-	if (serverAddress != NULL) {
+void httpSetServerAddress() {
+
+	// HTTP Server configuration
+	const char serverBaseAddress[] = "http://pi3aleben:5000/telemetry"; //TODO: Get this from settings
+	const char group[] = "mobile-sensors";
+
+	if (httpAddress != NULL) {
 		logError(MODULE_NAME, "Server address already set");
 		return;
 	}
 
 	// Address length: 31 (base) + 1 (separator) + group length + 1 (separator) + clientID length + 1 (null terminator)
-	int len = 31 + 1 + strlen(group) + 1 + getEsp32IDLen() + 1;
+	int len = strlen(serverBaseAddress) + 1 + strlen(group) + 1 + getEsp32IDLen() + 1;
 	char *addr = (char*) malloc(len * sizeof(char)); // Allocate memory for the address. This will last until the end of the program so it's ok (probably) to not free it
 	sprintf(addr, "%s/%s/%s", serverBaseAddress, group, getEsp32ID());
-	serverAddress = addr;
+	httpAddress = addr;
 }
 
 void httpSetup() {
-	setServerAddress();
+	httpSetServerAddress();
+	logInfo(MODULE_NAME, "HTTP client initialized");
 }
 
 bool httpPublishSensorData(char *payload) {
@@ -51,7 +54,7 @@ bool httpPublishSensorData(char *payload) {
 
 	// Create HTTP client
 	HTTPClient http;
-	http.begin(serverAddress);
+	http.begin(httpAddress);
 	http.addHeader("Content-Type", "application/json");
 
 	int responseCode = http.POST(payload);
