@@ -43,6 +43,10 @@ Settings settings = {
 // Counter for sent messages interval.
 int counter = 0;
 
+// Counter time 
+unsigned long currentTime = 0;
+unsigned long sendCounter = 1;
+
 // Setup ESP32 
 void setup(){
 	// Init serial baud rate
@@ -83,11 +87,14 @@ void loop() {
 	// Mantain the connection with the broker MQTT
 	dataUploadLoop();
 
+	// Update time 
+	currentTime = millis();
+
 	// Get GPS data
 	struct gpsPoint point = getNewPoint();
 	float distanceTravelled = getDistance(settings.distanceMethod, getLastPoint(), getNewPoint());
 
-	if((settings.trigger == 0 && (distanceTravelled >= settings.distance || getLastPoint().timestamp == 0)) || (settings.trigger == 1 && counter >= settings.time)) {
+	if((settings.trigger == 0 && (distanceTravelled >= settings.distance || getLastPoint().timestamp == 0)) || (settings.trigger == 1 && currentTime >= settings.time*sendCounter)) {
 		// Get temperature and pressure from BMP280
 		float temperature = bmp280ReadTemperature();
 		float pressure = bmp280ReadPressure();
@@ -100,9 +107,7 @@ void loop() {
 		char *jsonMsg = serializeSensorData(&temperature, &humidity, &temperature, &point.lat, &point.lon, &aqi, &tvoc, &eco2);
 		// Update the last point with the new point.
 		if(settings.trigger == 0) updateGPSPoint();
-		else {
-			// TODO: Millis
-		}
+		else sendCounter++;
 
 		if (jsonMsg != NULL) {
 			logInfof("MAIN", "Json to be pubblish: %s", jsonMsg);
