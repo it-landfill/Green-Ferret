@@ -1,6 +1,7 @@
 /**
  * @file DataUpload.cpp
- * @author Alessandro Benetton (aleben98@gmail.com) @author Crespan Lorenzo (lorenzo.crespan@gmail.com)
+ * @author Alessandro Benetton (aleben98@gmail.com) 
+ * @author Crespan Lorenzo (lorenzo.crespan@gmail.com)
  * @brief 
  * @version 0.1
  * @date 2023-06-20

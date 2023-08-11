@@ -15,6 +15,11 @@
 
 #include "../memory/settings.hpp"
 
+/**
+ * @brief Initialize WiFi.
+ *
+ * @param connectionSettings Pointer to the connection settings
+ */
 void wifiInit(ConnectionSettings *connectionSettings);
 
 /**

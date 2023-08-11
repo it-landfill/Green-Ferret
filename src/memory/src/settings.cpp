@@ -1,6 +1,7 @@
 /**
  * @file settings.cpp
- * @author Alessandro Benetton (aleben98@gmail.com) @author Crespan Lorenzo (lorenzo.crespan@gmail.com)
+ * @author Alessandro Benetton (aleben98@gmail.com) 
+ * @author Crespan Lorenzo (lorenzo.crespan@gmail.com)
  * @brief
  * @version 0.1
  * @date 2023-08-01
@@ -17,37 +18,45 @@
 
 #define MODULE_NAME "Settings"
 
+// Preferences and connection settings reference.
 Preferences preferences;
 ConnectionSettings *connSettingsRef = NULL;
 
 void connectionSettingsInit(ConnectionSettings *connSettings) {
+	// Set the reference to the connection settings struct.
 	connSettingsRef = connSettings;
+	// If the connection settings are found inside the preferences, load them.
 	if(preferences.begin("connSett", true)){
+		// Load the connection settings.
 		connSettings->mqttBroker = preferences.getString("mqttBroker", "");
 		connSettings->mqttPort = preferences.getUInt("mqttPort", 1883);
 		connSettings->mqttUsername = preferences.getString("mqttUsername", "");
 		connSettings->mqttPassword = preferences.getString("mqttPassword", "");
 		connSettings->connFailures = preferences.getUInt("connFailures", 0);
+		// Close the preferences.
 		preferences.end();
+		// Log the connection settings.
 		logInfo(MODULE_NAME, "Connection settings loaded");
 		logDebugf(MODULE_NAME, "MQTT Broker: %s", connSettings->mqttBroker);
 		logDebugf(MODULE_NAME, "MQTT Port: %d", connSettings->mqttPort);
 		logDebugf(MODULE_NAME, "MQTT Username: %s", connSettings->mqttUsername);
 		logDebugf(MODULE_NAME, "MQTT Password: %s", connSettings->mqttPassword);
 		logDebugf(MODULE_NAME, "Connection failures: %d", connSettings->connFailures);		
-	} else {
-		logWarning(MODULE_NAME, "Connection settings not found");
-	}
+	} else logWarning(MODULE_NAME, "Connection settings not found");
 }
 
 void connectionSettingsSave() {
+	// Open the preferences in RW-mode (second parameter indicates read/write mode).
 	preferences.begin("connSett", false);
+	// Save the connection settings.
 	preferences.putString("mqttBroker", connSettingsRef->mqttBroker);
 	preferences.putUInt("mqttPort", connSettingsRef->mqttPort);
 	preferences.putString("mqttUsername", connSettingsRef->mqttUsername);
 	preferences.putString("mqttPassword", connSettingsRef->mqttPassword);
 	preferences.putUInt("connFailures", connSettingsRef->connFailures);
+	// Close the preferences.
 	preferences.end();
+	// Log the connection settings.
 	logInfo(MODULE_NAME, "Connection settings saved");
 	logDebugf(MODULE_NAME, "MQTT Broker: %s", connSettingsRef->mqttBroker);
 	logDebugf(MODULE_NAME, "MQTT Port: %d", connSettingsRef->mqttPort);
@@ -56,9 +65,11 @@ void connectionSettingsSave() {
 	logDebugf(MODULE_NAME, "Connection failures: %d", connSettingsRef->connFailures);
 }
 
-
 void connectionSettingsErase() {
+	// Open the preferences in RW-mode (second parameter indicates read/write mode).
 	preferences.begin("connSett", false);
+	// Erase the connection settings.
 	preferences.clear();
+	// Close the preferences.
 	preferences.end();
 }

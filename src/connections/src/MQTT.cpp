@@ -49,11 +49,13 @@ void parseMessage(char* json) {
 
 	int protocol = doc["protocol"]; // 1
 	int trigger = doc["trigger"]; // 1
+	int distanceMethod = doc["distanceMethod"]; // 1
 	int distance = doc["distance"]; // 5
 	int time = doc["time"]; // 10
 
 	settingsRef->protocol = static_cast<DataUploadProtocol>(protocol);
 	settingsRef->trigger = trigger;
+	settingsRef->distanceMethod = (DistanceMethod) distanceMethod;
 	settingsRef->distance = distance;
 	settingsRef->time = time;
 
@@ -61,6 +63,7 @@ void parseMessage(char* json) {
 	logDebugf(MODULE_NAME, "Protocol: %d", protocol);
 	logDebugf(MODULE_NAME, "Protocol enum: %d", static_cast<DataUploadProtocol>(protocol));
 	logDebugf(MODULE_NAME, "Trigger: %d", trigger);
+	logDebugf(MODULE_NAME, "Distance method: %d", (DistanceMethod) distanceMethod);
 	logDebugf(MODULE_NAME, "Distance: %d", distance);
 	logDebugf(MODULE_NAME, "Time: %d", time);
 }

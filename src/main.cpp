@@ -5,109 +5,120 @@
 #include "connections/DataUpload.hpp"
 #include "utilities/loggerLib.hpp"
 #include "utilities/JSONUtils.hpp"
+#include "utilities/gpsDistanceUtils.hpp"
+#include "utilities/dataGPSStruct.hpp"
+#include "utilities/randomGPS.hpp"
 
 #include "sensors/aht20.hpp"
 #include "sensors/bmp280.hpp"
 #include "sensors/ens160.hpp"
+#include "sensors/gps.hpp"
 
 #include "memory/settings.hpp"
 
 // Switch between WROOM32 pin and HELTEC pin
 #ifdef WROOM32
-#define SDA_PIN 21
-#define SCL_PIN 22
+	#define SDA_PIN 21
+	#define SCL_PIN 22
+	#define LED_PIN 2		#TODO: Blink LED when in config mode. (NOTE: This pin have many problems in the WROOM32)
 #else
-#define SDA_PIN 41
-#define SCL_PIN 42
+	#define SDA_PIN 41
+	#define SCL_PIN 42
 #endif
 
-//#define LOCAL_DEBUG
+// #define LOCAL_DEBUG
 
+// Connection settings reference.
+ConnectionSettings connSettings;
+
+// Data upload settings reference.
 Settings settings = {
 	.protocol = NONE,
 	.trigger = -1,
+	.distanceMethod = NAIVE,
 	.distance = -1,
 	.time = -1
 };
 
-ConnectionSettings connSettings;
+// Counter for sent messages interval.
+int counter = 0;
 
+// Counter time 
+unsigned long currentTime = 0;
+unsigned long sendCounter = 1;
+
+// Setup ESP32 
 void setup(){
+	// Init serial baud rate
 	Serial.begin(115200);
+	
 	logInfo("MAIN", "Starting Setup");
 
-	// Load settings
+	// Load settings from memory and save them.
 	connectionSettingsInit(&connSettings);
-	// Use this to count resets before wifi connection. Rebooting the board 5 times in a row auto triggers WiFiManager	
-	connSettings.connFailures++;
+	connSettings.connFailures += 1;
 	connectionSettingsSave();
 
 	#ifndef LOCAL_DEBUG
-	wifiInit(&connSettings);
-	wifiSetup();
-	dataUploadSetup(&settings, &connSettings);
-
+		// Setup connections and data upload
+		wifiInit(&connSettings);
+		wifiSetup();
+		dataUploadSetup(&settings, &connSettings);
 	#else
-	logWarning("MAIN", "Local Debug Enabled");
+		logWarning("MAIN", "Local Debug Enabled");
 	#endif
 
-	// Sensor setup
+	// Setup sensors. In order: 
+	// 1. AHT20
+	// 2. ENS160
+	// 3. BMP280
+	// 4. GPS
 	Wire.begin(SDA_PIN, SCL_PIN);
 	aht20Setup();
 	ens160Setup(aht20GetTemperature(), aht20GetHumidity());
 	bmp280Setup();
+	gpsSetup();
 
 	logInfo("MAIN", "Setup Complete");
 }
 
-int counter = 0;
-
-float generateLatitute() {
-	// Between 45.6 and 45.7
-	float lat = 45.6;
-	lat += (float) (rand() % 10000 + 1) / 100000;
-	return lat;
-}
-
-float generateLongitude() {
-	// Between 12.2 and 12.3
-	float lon = 12.2;
-	lon += (float) (rand() % 10000 + 1) / 100000;
-	return lon;
-}
-
-void loop(){
-
+// Main loop
+void loop() {
+	// Mantain the connection with the broker MQTT
 	dataUploadLoop();
 
-	float lat = generateLatitute();
-	float lon = generateLongitude();
+	// Update time 
+	currentTime = millis();
 
-	float humidity = aht20GetHumidity();
-	int aqi = ens160GetAQI();
-	int tvoc = ens160GetTVOC();
-	int eco2 = ens160GetECO2();
+	// Get GPS data
+	struct gpsPoint point = getNewPoint();
+	float distanceTravelled = getDistance(settings.distanceMethod, getLastPoint(), getNewPoint());
 
-
-	float temperature = bmp280ReadTemperature();
-
-	char* jsonMsg = NULL;
-
-	if (counter++ == 5) { // Every minute
+	if((settings.trigger == 0 && (distanceTravelled >= settings.distance || getLastPoint().timestamp == 0)) || (settings.trigger == 1 && currentTime >= settings.time*sendCounter)) {
+		// Get temperature and pressure from BMP280
+		float temperature = bmp280ReadTemperature();
 		float pressure = bmp280ReadPressure();
-		jsonMsg = serializeSensorData(&temperature, &humidity, &pressure, &lat, &lon, &aqi, &tvoc, &eco2);
-		counter = 0;
-	} else {
-		jsonMsg = serializeSensorData(&temperature, &humidity, NULL, &lat, &lon, &aqi, &tvoc, &eco2);
+		// Get humidity from AHT20
+		float humidity = aht20GetHumidity();
+		// Get AQI, TVOC and eCO2 from ENS160
+		int aqi = ens160GetAQI();
+		int tvoc = ens160GetTVOC();
+		int eco2 = ens160GetECO2();
+		char *jsonMsg = serializeSensorData(&temperature, &humidity, &temperature, &point.lat, &point.lon, &aqi, &tvoc, &eco2);
+		// Update the last point with the new point.
+		if(settings.trigger == 0) updateGPSPoint();
+		else sendCounter++;
+
+		if (jsonMsg != NULL) {
+			logInfof("MAIN", "Json to be pubblish: %s", jsonMsg);
+			// Publish the JSON message, if local debug is not enabled.
+			#ifndef LOCAL_DEBUG
+				publishSensorData(jsonMsg);
+			#endif
+			// Free the JSON message
+			free(jsonMsg);
+		}
 	}
-	logInfof("MAIN", "Json to be pubblish: %s", jsonMsg);
-	#ifndef LOCAL_DEBUG
-	publishSensorData(jsonMsg);
-	#endif
-	free(jsonMsg);
-	#ifdef LOCAL_DEBUG
-	delay(1000);
-	#else
-	delay(10000); // Sleep for 10 seconds
-	#endif
+	// TODO: Increase? Decrease? Delay? 
+	delay(100);
 }
