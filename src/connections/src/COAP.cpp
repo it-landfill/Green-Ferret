@@ -21,7 +21,9 @@
 
 #define MODULE_NAME "COAP"
 
-const IPAddress coapServerAddress = IPAddress(192,168,1,18); //TODO: get from settings
+//TODO: get from settings
+//TODO: This needs to be a string/URL
+const IPAddress coapServerAddress = IPAddress(192,168,1,18); 
 const char *coapEndpoint = NULL;
 const int coapPort = 5683; //TODO: get from settings
 
