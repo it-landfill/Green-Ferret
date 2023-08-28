@@ -11,12 +11,12 @@
 
 #ifndef COAP_HPP
 #define COAP_HPP
-
+#include "../memory/settings.hpp"
 /**
  * @brief Initialize the COAP connection.
  * 
  */
-void coapSetup();
+void coapSetup(ConnectionSettings *connSettingsRef);
 
 /**
  * @brief Publish a message to the COAP server in the sensor data topic.
