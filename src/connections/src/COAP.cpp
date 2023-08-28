@@ -1,12 +1,12 @@
 /**
  * @file COAP.cpp
  * @author Alessandro Benetton (aleben98@gmail.com) @author Crespan Lorenzo (lorenzo.crespan@gmail.com)
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2023-06-24
- * 
+ *
  * @copyright Copyright (c) 2023
- * 
+ *
  */
 
 #include <Arduino.h>
@@ -23,7 +23,7 @@
 
 //TODO: get from settings
 //TODO: This needs to be a string/URL
-const IPAddress coapServerAddress = IPAddress(192,168,1,18); 
+const IPAddress coapServerAddress = IPAddress(192,168,1,18);
 const char *coapEndpoint = NULL;
 const int coapPort = 5683; //TODO: get from settings
 
@@ -65,6 +65,16 @@ void coapSetup() {
 	coapSetServerAddress();
 	coap.response(coapCallbackResponse);
 	coap.start();
+
+	const char *apipch = "192.168.4.1";
+	IPAddress apip;
+
+	if (apip.fromString("192")) { // try to parse into the IPAddress
+		Serial.println(apip); // print the parsed IPAddress
+	} else {
+		Serial.println("UnParsable IP");
+	}
+
 	logInfof(MODULE_NAME, "CoAP client initialized. Endpoint: %s", coapEndpoint);
 }
 
