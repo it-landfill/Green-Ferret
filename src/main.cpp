@@ -109,7 +109,7 @@ void loop() {
 		else sendCounter++;
 
 		if (jsonMsg != NULL) {
-			logInfof("MAIN", "Json to be pubblish: %s", jsonMsg);
+			logInfo("MAIN", "Json to be pubblish:", jsonMsg);
 			// Publish the JSON message, if local debug is not enabled.
 			#ifndef LOCAL_DEBUG
 				publishSensorData(jsonMsg);

@@ -101,7 +101,7 @@ void wifiSetup(){
 	} else connectionSettingsRef->connFailures = 0;
 	connectionSettingsSave();
 
-	logInfof(MODULE_NAME, "WiFi connected. IP address: %s", WiFi.localIP().toString().c_str());
+	logInfo(MODULE_NAME, "WiFi connected. IP address:", WiFi.localIP().toString().c_str());
 }
 
 bool wifiStatus(bool reconnect) {

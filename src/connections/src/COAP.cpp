@@ -40,7 +40,7 @@ void coapCallbackResponse(CoapPacket &packet, IPAddress ip, int port) {
 	Serial.println(p);
 
 
-	logInfof(MODULE_NAME, "CoAP response received. Content: $s", p);
+	logInfo(MODULE_NAME, "CoAP response received. Content:", p);
 }
 
 void coapSetServerAddress() {
@@ -76,11 +76,11 @@ void coapSetup(ConnectionSettings *connSettingsRef) {
 	coap.response(coapCallbackResponse);
 	coap.start();
 
-	logInfof(MODULE_NAME, "CoAP client initialized. Endpoint: %s", coapEndpoint);
+	logInfo(MODULE_NAME, "CoAP client initialized. Endpoint: %s", coapEndpoint);
 }
 
 bool coapPublishSensorData(char *payload) {
-	logDebugf(MODULE_NAME, "Publishing sensor data %s", payload);
+	logDebug(MODULE_NAME, "Publishing sensor data %s", payload);
 
 	// Check WiFi connection
 	if (WiFi.status() != WL_CONNECTED) {

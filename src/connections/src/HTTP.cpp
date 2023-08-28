@@ -39,6 +39,8 @@ void httpSetServerAddress() {
 	char *addr = (char*) malloc(len * sizeof(char)); // Allocate memory for the address. This will last until the end of the program so it's ok (probably) to not free it
 	sprintf(addr, "http://%s/%s/%s/%s", connSettingsRef2->httpHost, serverEndpoint, group, getEsp32ID());
 	httpAddress = addr;
+	Serial.printf("HTTP Address: %s\n", connSettingsRef2->httpHost);
+	Serial.printf("HTTP Address: %s\n", httpAddress);
 }
 
 void httpSetup(ConnectionSettings *connSettingsRef) {
@@ -68,7 +70,8 @@ bool httpPublishSensorData(char *payload) {
 		return true;
 	} else if (responseCode > 0) {
 		// Request sent successfully, but server returned an error
-		logWarningf(MODULE_NAME, "Server returned error code %d.\t%s", responseCode, http.getString());
+		logWarning(MODULE_NAME, "Server returned error code", responseCode);
+		logWarning(MODULE_NAME, "Response:", http.getString());
 	} else {
 		// Request failed
 		logError(MODULE_NAME, "HTTP request failed");

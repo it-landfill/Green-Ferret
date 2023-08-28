@@ -39,13 +39,13 @@ void connectionSettingsInit(ConnectionSettings *connSettings) {
 		preferences.end();
 		// Log the connection settings.
 		logInfo(MODULE_NAME, "Connection settings loaded");
-		logDebugf(MODULE_NAME, "MQTT Broker: %s", connSettings->mqttBroker);
-		logDebugf(MODULE_NAME, "MQTT Port: %d", connSettings->mqttPort);
-		logDebugf(MODULE_NAME, "MQTT Username: %s", connSettings->mqttUsername);
-		logDebugf(MODULE_NAME, "MQTT Password: %s", connSettings->mqttPassword);
-		logDebugf(MODULE_NAME, "HTTP Host: %s", connSettings->httpHost);
-		logDebugf(MODULE_NAME, "COAP Host: %s", connSettings->coapHost);
-		logDebugf(MODULE_NAME, "Connection failures: %d", connSettings->connFailures);		
+		logDebug(MODULE_NAME, "MQTT Broker", connSettings->mqttBroker);
+		logDebug(MODULE_NAME, "MQTT Port", ((int) connSettings->mqttPort));
+		logDebug(MODULE_NAME, "MQTT Username", connSettings->mqttUsername);
+		logDebug(MODULE_NAME, "MQTT Password", connSettings->mqttPassword);
+		logDebug(MODULE_NAME, "HTTP Host", connSettings->httpHost);
+		logDebug(MODULE_NAME, "COAP Host", connSettings->coapHost);
+		logDebug(MODULE_NAME, "Connection failures", ((int) connSettings->connFailures));		
 	} else logWarning(MODULE_NAME, "Connection settings not found");
 }
 
@@ -64,13 +64,13 @@ void connectionSettingsSave() {
 	preferences.end();
 	// Log the connection settings.
 	logInfo(MODULE_NAME, "Connection settings saved");
-	logDebugf(MODULE_NAME, "MQTT Broker: %s", connSettingsRef->mqttBroker);
-	logDebugf(MODULE_NAME, "MQTT Port: %d", connSettingsRef->mqttPort);
-	logDebugf(MODULE_NAME, "MQTT Username: %s", connSettingsRef->mqttUsername);
-	logDebugf(MODULE_NAME, "MQTT Password: %s", connSettingsRef->mqttPassword);
-	logDebugf(MODULE_NAME, "HTTP Host: %s", connSettingsRef->httpHost);
-	logDebugf(MODULE_NAME, "COAP Host: %s", connSettingsRef->coapHost);
-	logDebugf(MODULE_NAME, "Connection failures: %d", connSettingsRef->connFailures);
+	logDebug(MODULE_NAME, "MQTT Broker", connSettingsRef->mqttBroker);
+	logDebug(MODULE_NAME, "MQTT Port", ((int) connSettingsRef->mqttPort));
+	logDebug(MODULE_NAME, "MQTT Username", connSettingsRef->mqttUsername);
+	logDebug(MODULE_NAME, "MQTT Password", connSettingsRef->mqttPassword);
+	logDebug(MODULE_NAME, "HTTP Host", connSettingsRef->httpHost);
+	logDebug(MODULE_NAME, "COAP Host", connSettingsRef->coapHost);
+	logDebug(MODULE_NAME, "Connection failures", ((int) connSettingsRef->connFailures));
 }
 
 void connectionSettingsErase() {

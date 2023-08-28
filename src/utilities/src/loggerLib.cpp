@@ -19,73 +19,103 @@
 #define ERROR "E"
 #define WARNING "W"
 #define DEBUG "D"
-#define VERBOSE "V"
 
 void logMessage(const char* level, const char* module, const char *message) {
 	Serial.printf("[%s] [%s] %s\n", level, module, message);
+}
+
+void logMessage(const char* level, const char* module, const char *message, const char *value) {
+	Serial.printf("[%s] [%s] %s %s\n", level, module, message, value);
+}
+
+void logMessage(const char* level, const char* module, const char *message, String value) {
+	Serial.printf("[%s] [%s] %s %s\n", level, module, message, value);
+}
+
+void logMessage(const char* level, const char* module, const char *message, int value) {
+	Serial.printf("[%s] [%s] %s %d\n", level, module, message, value);
+}
+
+void logMessage(const char* level, const char* module, const char *message, float value) {
+	Serial.printf("[%s] [%s] %s %.2f\n", level, module, message, value);
 }
 
 void logInfo(const char *module, const char *message) {
 	logMessage(INFO, module, message);
 }
 
-void logInfof(const char *module, const char *fmt, ...) {
-	va_list arg;
-	va_start(arg, fmt);
-	char* message = varargToCharArr(fmt, arg);
-	va_end(arg);
-	logMessage(INFO, module, message);
-	free(message);
+void logInfo(const char *module, const char *message, const char* value) {
+	logMessage(INFO, module, message, value);
+}
+
+void logInfo(const char *module, const char *message, String value) {
+	logMessage(INFO, module, message, value);
+}
+
+void logInfo(const char *module, const char *message, int value) {
+	logMessage(INFO, module, message, value);
+}
+
+void logInfo(const char *module, const char *message, float value) {
+	logMessage(INFO, module, message, value);
 }
 
 void logError(const char *module, const char *message){
 	logMessage(ERROR, module, message);
 }
 
-void logErrorf(const char *module, const char *fmt, ...) {
-	va_list arg;
-	va_start(arg, fmt);
-	char* message = varargToCharArr(fmt, arg);
-	va_end(arg);
-	logMessage(ERROR, module, message);
-	free(message);
+void logError(const char *module, const char *message, const char* value) {
+	logMessage(ERROR, module, message, value);
+}
+
+void logError(const char *module, const char *message, String value) {
+	logMessage(ERROR, module, message, value);
+}
+
+void logError(const char *module, const char *message, int value) {
+	logMessage(ERROR, module, message, value);
+}
+
+void logError(const char *module, const char *message, float value) {
+	logMessage(ERROR, module, message, value);
 }
 
 void logWarning(const char *module, const char *message){
 	logMessage(WARNING, module, message);
 }
 
-void logWarningf(const char *module, const char *fmt, ...) {
-	va_list arg;
-	va_start(arg, fmt);
-	char* message = varargToCharArr(fmt, arg);
-	va_end(arg);
-	logMessage(INFO, module, message);
-	free(message);
+void logWarning(const char *module, const char *message, const char* value) {
+	logMessage(WARNING, module, message, value);
+}
+
+void logWarning(const char *module, const char *message, String value) {
+	logMessage(WARNING, module, message, value);
+}
+
+void logWarning(const char *module, const char *message, int value) {
+	logMessage(WARNING, module, message, value);
+}
+
+void logWarning(const char *module, const char *message, float value) {
+	logMessage(WARNING, module, message, value);
 }
 
 void logDebug(const char *module, const char *message){
 	logMessage(DEBUG, module, message);
 }
 
-void logDebugf(const char *module, const char *fmt, ...) {
-	va_list arg;
-	va_start(arg, fmt);
-	char* message = varargToCharArr(fmt, arg);
-	va_end(arg);
-	logMessage(DEBUG, module, message);
-	free(message);
+void logDebug(const char *module, const char *message, const char* value) {
+	logMessage(DEBUG, module, message, value);
 }
 
-void logVerbose(const char *module, const char *message){
-	logMessage(VERBOSE, module, message);
+void logDebug(const char *module, const char *message, String value) {
+	logMessage(DEBUG, module, message, value);
 }
 
-void logVerbosef(const char *module, const char *fmt, ...) {
-	va_list arg;
-	va_start(arg, fmt);
-	char* message = varargToCharArr(fmt, arg);
-	va_end(arg);
-	logMessage(VERBOSE, module, message);
-	free(message);
+void logDebug(const char *module, const char *message, int value) {
+	logMessage(DEBUG, module, message, value);
+}
+
+void logDebug(const char *module, const char *message, float value) {
+	logMessage(DEBUG, module, message, value);
 }
