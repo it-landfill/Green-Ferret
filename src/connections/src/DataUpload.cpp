@@ -44,7 +44,7 @@ void dataUploadSetup(Settings* settings, ConnectionSettings *connSettings) {
 		delay(1000);
 	}
 	// Initialize COAP client (but don't connect yet)
-	coapSetup();
+	coapSetup(connSettings);
 
 	// Set the protocol
 	sett = settings;

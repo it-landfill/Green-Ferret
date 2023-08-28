@@ -20,7 +20,6 @@
 #ifdef WROOM32
 	#define SDA_PIN 21
 	#define SCL_PIN 22
-	#define LED_PIN 2		#TODO: Blink LED when in config mode. (NOTE: This pin have many problems in the WROOM32)
 #else
 	#define SDA_PIN 41
 	#define SCL_PIN 42
