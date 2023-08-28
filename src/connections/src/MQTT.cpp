@@ -38,8 +38,11 @@ ConnectionSettings *connSettingsRef1 = NULL;
  * @param json
  */
 void parseMessage(char* json) {
-	StaticJsonDocument<64> doc;
+	StaticJsonDocument<96> doc;
 	DeserializationError error = deserializeJson(doc, json);
+
+	Serial.println("Received JSON:");
+	Serial.println(json);
 
 	if (error) {
 		Serial.print(F("deserializeJson() failed: "));
