@@ -37,8 +37,9 @@ void httpSetServerAddress() {
 	// Address length: 6 (http://) + httpHost + endpoint + 1 (separator) + group length + 1 (separator) + clientID length + 1 (null terminator)
 	int len = 6 + (connSettingsRef2->httpHost).length() + 1 + strlen(serverEndpoint) + 1 + strlen(group) + 1 + getEsp32IDLen() + 1;
 	char *addr = (char*) malloc(len * sizeof(char)); // Allocate memory for the address. This will last until the end of the program so it's ok (probably) to not free it
-	sprintf(addr, "http://%s/%s/%s/%s", connSettingsRef2->httpHost, serverEndpoint, group, getEsp32ID());
+	sprintf(addr, "http://%s/%s/%s/%s", connSettingsRef2->httpHost.c_str(), serverEndpoint, group, getEsp32ID());
 	httpAddress = addr;
+	logDebug(MODULE_NAME, "Server address set to", httpAddress);
 }
 
 void httpSetup(ConnectionSettings *connSettingsRef) {
@@ -68,7 +69,8 @@ bool httpPublishSensorData(char *payload) {
 		return true;
 	} else if (responseCode > 0) {
 		// Request sent successfully, but server returned an error
-		logWarningf(MODULE_NAME, "Server returned error code %d.\t%s", responseCode, http.getString());
+		logWarning(MODULE_NAME, "Server returned error code", responseCode);
+		logWarning(MODULE_NAME, "Response:", http.getString());
 	} else {
 		// Request failed
 		logError(MODULE_NAME, "HTTP request failed");

@@ -55,14 +55,15 @@ bool ens160Setup(float ambientTemp, float ambientHum, uint8_t mode) {
 }
 
 void ens160SetPWRMode(uint8_t mode) {
-	logVerbosef(MODULE_NAME,"Setting power mode: %d\n", mode);
+	logDebug(MODULE_NAME,"Setting power mode:", mode);
 	#ifndef DISABLE_ENS160
 	ENS160.setPWRMode(mode);
 	#endif
 }
 
 void setTempAndHum(float ambientTemp, float relativeHumidity) {
-	logVerbosef(MODULE_NAME,"Setting temperature: %f and humidity: %f\n", ambientTemp, relativeHumidity);
+	logDebug(MODULE_NAME,"Setting temperature:", ambientTemp);
+	logDebug(MODULE_NAME,"Setting humidity:", relativeHumidity);
 	#ifndef DISABLE_ENS160
 	ENS160.setTempAndHum(ambientTemp, relativeHumidity);
 	#endif

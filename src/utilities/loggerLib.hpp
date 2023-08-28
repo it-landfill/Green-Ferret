@@ -12,14 +12,25 @@
 
 #ifndef LOGGERLIB_HPP
 #define LOGGERLIB_HPP
+#include <Arduino.h>
 void logInfo(const char *module, const char *message);
+void logInfo(const char *module, const char *message, const char* value);
+void logInfo(const char *module, const char *message, String value);
+void logInfo(const char *module, const char *message, int value);
+void logInfo(const char *module, const char *message, float value);
 void logError(const char *module, const char *message);
+void logError(const char *module, const char *message, const char* value);
+void logError(const char *module, const char *message, String value);
+void logError(const char *module, const char *message, int value);
+void logError(const char *module, const char *message, float value);
 void logWarning(const char *module, const char *message);
+void logWarning(const char *module, const char *message, const char* value);
+void logWarning(const char *module, const char *message, String value);
+void logWarning(const char *module, const char *message, int value);
+void logWarning(const char *module, const char *message, float value);
 void logDebug(const char *module, const char *message);
-void logVerbose(const char *module, const char *message);
-void logInfof(const char *module, const char *fmt, ...);
-void logErrorf(const char *module, const char *fmt, ...);
-void logWarningf(const char *module, const char *fmt, ...);
-void logDebugf(const char *module, const char *fmt, ...);
-void logVerbosef(const char *module, const char *fmt, ...);
+void logDebug(const char *module, const char *message, const char* value);
+void logDebug(const char *module, const char *message, String value);
+void logDebug(const char *module, const char *message, int value);
+void logDebug(const char *module, const char *message, float value);
 #endif

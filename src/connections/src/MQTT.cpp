@@ -38,8 +38,11 @@ ConnectionSettings *connSettingsRef1 = NULL;
  * @param json
  */
 void parseMessage(char* json) {
-	StaticJsonDocument<64> doc;
+	StaticJsonDocument<96> doc;
 	DeserializationError error = deserializeJson(doc, json);
+
+	Serial.println("Received JSON:");
+	Serial.println(json);
 
 	if (error) {
 		Serial.print(F("deserializeJson() failed: "));
@@ -60,12 +63,12 @@ void parseMessage(char* json) {
 	settingsRef->time = time;
 
 	logDebug(MODULE_NAME, "Settings received:");
-	logDebugf(MODULE_NAME, "Protocol: %d", protocol);
-	logDebugf(MODULE_NAME, "Protocol enum: %d", static_cast<DataUploadProtocol>(protocol));
-	logDebugf(MODULE_NAME, "Trigger: %d", trigger);
-	logDebugf(MODULE_NAME, "Distance method: %d", (DistanceMethod) distanceMethod);
-	logDebugf(MODULE_NAME, "Distance: %d", distance);
-	logDebugf(MODULE_NAME, "Time: %d", time);
+	logDebug(MODULE_NAME, "Protocol:", protocol);
+	logDebug(MODULE_NAME, "Protocol enum:", static_cast<DataUploadProtocol>(protocol));
+	logDebug(MODULE_NAME, "Trigger:", trigger);
+	logDebug(MODULE_NAME, "Distance method:", (DistanceMethod) distanceMethod);
+	logDebug(MODULE_NAME, "Distance:", distance);
+	logDebug(MODULE_NAME, "Time:", time);
 }
 
 /**
@@ -82,14 +85,14 @@ void callback(char* topic, byte* payload, unsigned int length) {
 	// Strtok splits a string into tokens with the specified divider. https://cplusplus.com/reference/cstring/strtok/
 	pch = strtok (topic,"/");
 	if (pch != NULL && strcmp(pch, "CFG") != 0) {
-		logWarningf(MODULE_NAME, "Received message on topic %s, but expected CFG", topic);
+		logWarning(MODULE_NAME, "Received message on topic but expected CFG. ", topic);
 		return;
 	}
 
 	// Calling strtok with NULL returns the next token in the string. The second token should be ESP ID and we can ignore it since we receive only what we subscribed for.
 	pch = strtok (NULL, "/");
 	if (pch == NULL) {
-		logWarningf(MODULE_NAME, "Received message on topic %s, but expected ESP ID", topic);
+		logWarning(MODULE_NAME, "Received message on topic but expected ESP ID.", topic);
 		return;
 	}
 
@@ -101,7 +104,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
 		parseMessage(p);
 		free(p);
 	} else {
-		logWarningf(MODULE_NAME, "Received message on topic %s, but expected Config", topic);
+		logWarning(MODULE_NAME, "Received message on topic but expected Config.", topic);
 		return;
 	}
 }
@@ -150,10 +153,10 @@ void mqttSetup(Settings *settings, ConnectionSettings *connSettingsRef) {
  */
 void mqttSubscribe(char* topics[]) {
 	for (int i = 0; i < sizeof(topics) / sizeof(topics[0]); i++) {
-		logDebugf(MODULE_NAME, "Subscribing to topic: %s", topics[i]);
+		logDebug(MODULE_NAME, "Subscribing to topic", topics[i]);
 		bool res = clientMQTT.subscribe(topics[i]);
-		if (res) logDebugf(MODULE_NAME, "Subscribed to topic %s", topics[i]);
-		else logDebugf(MODULE_NAME, "Subscription failed to topic %s", topics[i]);
+		if (res) logDebug(MODULE_NAME, "Subscribed to topic", topics[i]);
+		else logDebug(MODULE_NAME, "Subscription failed to topic", topics[i]);
 	}
 
 }

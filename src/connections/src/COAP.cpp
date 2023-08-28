@@ -40,17 +40,17 @@ void coapCallbackResponse(CoapPacket &packet, IPAddress ip, int port) {
 	Serial.println(p);
 
 
-	logInfof(MODULE_NAME, "CoAP response received. Content: $s", p);
+	logInfo(MODULE_NAME, "CoAP response received. Content:", p);
 }
 
 void coapSetServerAddress() {
 
 	// Parse ipaddress
 
-	if (coapServerAddress.fromString(connSettingsRef3->coapHost)) { // try to parse into the IPAddress
-		Serial.println("Coap ip parsed");
+	if (coapServerAddress.fromString(connSettingsRef3->coapHost.c_str())) { // try to parse into the IPAddress
+		logInfo(MODULE_NAME, "Coap ip parsed", coapServerAddress.toString());
 	} else {
-		Serial.println("UnParsable COAP IP");
+		logError(MODULE_NAME, "UnParsable COAP IP", connSettingsRef3->coapHost.c_str());
 	}
 
 	// COAP Server configuration
@@ -66,6 +66,8 @@ void coapSetServerAddress() {
 	char *addr = (char*) malloc(len * sizeof(char)); // Allocate memory for the address. This will last until the end of the program so it's ok (probably) to not free it
 	sprintf(addr, "telemetry/%s/%s", group, getEsp32ID());
 	coapEndpoint = addr;
+
+	logDebug(MODULE_NAME, "Server endpoint set to", coapEndpoint);
 }
 
 void coapSetup(ConnectionSettings *connSettingsRef) {
@@ -76,11 +78,11 @@ void coapSetup(ConnectionSettings *connSettingsRef) {
 	coap.response(coapCallbackResponse);
 	coap.start();
 
-	logInfof(MODULE_NAME, "CoAP client initialized. Endpoint: %s", coapEndpoint);
+	logInfo(MODULE_NAME, "CoAP client initialized. Endpoint:", coapEndpoint);
 }
 
 bool coapPublishSensorData(char *payload) {
-	logDebugf(MODULE_NAME, "Publishing sensor data %s", payload);
+	logDebug(MODULE_NAME, "Publishing sensor data:", payload);
 
 	// Check WiFi connection
 	if (WiFi.status() != WL_CONNECTED) {

@@ -33,6 +33,7 @@ WiFiManagerParameter custom_mqtt_port("mqttPort", "mqtt port", "1883", 6);
 WiFiManagerParameter custom_mqtt_username("mqttUsername", "mqtt username", "", 40);
 WiFiManagerParameter custom_mqtt_password("mqttPassword", "mqtt password", "", 40);
 WiFiManagerParameter custom_http_host("httpHost", "http host", "", 40);
+// NOTE: This HAS to be an IP address, not a hostname. DO NOT specify the port.
 WiFiManagerParameter custom_coap_host("coapHost", "coap host", "", 40);
 
 /**
@@ -101,7 +102,7 @@ void wifiSetup(){
 	} else connectionSettingsRef->connFailures = 0;
 	connectionSettingsSave();
 
-	logInfof(MODULE_NAME, "WiFi connected. IP address: %s", WiFi.localIP().toString().c_str());
+	logInfo(MODULE_NAME, "WiFi connected. IP address:", WiFi.localIP().toString().c_str());
 }
 
 bool wifiStatus(bool reconnect) {

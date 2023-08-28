@@ -42,7 +42,7 @@ float aht20GetTemperature(){
 	refreshMeasurement();
 	return aht20.getTemperature();
 	#else
-	return -1.;
+	return -1.1;
 	#endif
 }
 

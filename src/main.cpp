@@ -93,7 +93,7 @@ void loop() {
 	struct gpsPoint point = getNewPoint();
 	float distanceTravelled = getDistance(settings.distanceMethod, getLastPoint(), getNewPoint());
 
-	if((settings.trigger == 0 && (distanceTravelled >= settings.distance || getLastPoint().timestamp == 0)) || (settings.trigger == 1 && currentTime >= settings.time*sendCounter)) {
+	if((settings.trigger == 0 && (distanceTravelled >= settings.distance || getLastPoint().timestamp == 0)) || (settings.trigger == 1 && currentTime >= settings.time*1000*sendCounter)) {
 		// Get temperature and pressure from BMP280
 		float temperature = bmp280ReadTemperature();
 		float pressure = bmp280ReadPressure();
@@ -109,7 +109,7 @@ void loop() {
 		else sendCounter++;
 
 		if (jsonMsg != NULL) {
-			logInfof("MAIN", "Json to be pubblish: %s", jsonMsg);
+			logInfo("MAIN", "Json to be pubblish:", jsonMsg);
 			// Publish the JSON message, if local debug is not enabled.
 			#ifndef LOCAL_DEBUG
 				publishSensorData(jsonMsg);
