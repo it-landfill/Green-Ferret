@@ -35,7 +35,7 @@ void dataUploadSetup(Settings* settings, ConnectionSettings *connSettings) {
 	mqttConnect();
 
 	// Initialize HTTP client (but don't connect yet)
-	httpSetup();
+	httpSetup(connSettings);
 
 	// Busy waiting to receive config from mqtt
 	while (settings->protocol == NONE) {
@@ -44,7 +44,7 @@ void dataUploadSetup(Settings* settings, ConnectionSettings *connSettings) {
 		delay(1000);
 	}
 	// Initialize COAP client (but don't connect yet)
-	coapSetup();
+	coapSetup(connSettings);
 
 	// Set the protocol
 	sett = settings;

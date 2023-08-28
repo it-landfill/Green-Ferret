@@ -26,4 +26,10 @@ char * getEsp32ID();
  */
 int getEsp32IDLen();
 
+/**
+ * @brief Print the ESP32 heap info (free heap, total heap)
+ * 
+ */
+void printEspHeapInfo();
+
 #endif

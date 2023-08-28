@@ -29,3 +29,7 @@ int getEsp32IDLen() {
 	if (ESP32_ID == NULL) getEsp32ID();
 	return strlen(ESP32_ID);
 }
+
+void printEspHeapInfo() {
+	Serial.printf("Heap available: %d/%d\n", ESP.getFreeHeap(), ESP.getHeapSize());
+}

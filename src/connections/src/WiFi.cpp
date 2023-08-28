@@ -28,10 +28,12 @@ WiFiManager wifiManager;
 ConnectionSettings *connectionSettingsRef;
 
 // WiFiManager parameters
-WiFiManagerParameter custom_mqtt_broker("server", "mqtt server", "", 40);
-WiFiManagerParameter custom_mqtt_port("port", "mqtt port", "1883", 6);
-WiFiManagerParameter custom_mqtt_username("username", "mqtt username", "", 40);
-WiFiManagerParameter custom_mqtt_password("password", "mqtt password", "", 40);
+WiFiManagerParameter custom_mqtt_broker("mqttServer", "mqtt server", "", 40);
+WiFiManagerParameter custom_mqtt_port("mqttPort", "mqtt port", "1883", 6);
+WiFiManagerParameter custom_mqtt_username("mqttUsername", "mqtt username", "", 40);
+WiFiManagerParameter custom_mqtt_password("mqttPassword", "mqtt password", "", 40);
+WiFiManagerParameter custom_http_host("httpHost", "http host", "", 40);
+WiFiManagerParameter custom_coap_host("coapHost", "coap host", "", 40);
 
 /**
  * @brief Callback that gets called after closing configportal. It saves the new settings.
@@ -43,6 +45,8 @@ void saveConfigCallback () {
 	connectionSettingsRef->mqttPort = atoi(custom_mqtt_port.getValue());
 	connectionSettingsRef->mqttUsername = custom_mqtt_username.getValue();
 	connectionSettingsRef->mqttPassword = custom_mqtt_password.getValue();
+	connectionSettingsRef->httpHost = custom_http_host.getValue();
+	connectionSettingsRef->coapHost = custom_coap_host.getValue();
 	connectionSettingsSave();
 }
 
@@ -56,10 +60,14 @@ void wifiInit(ConnectionSettings *connectionSettings) {
 	wifiManager.addParameter(&custom_mqtt_port);
 	wifiManager.addParameter(&custom_mqtt_username);
 	wifiManager.addParameter(&custom_mqtt_password);
-	custom_mqtt_broker.setValue(connectionSettings->mqttBroker.c_str(), connectionSettings->mqttBroker.length());
-	custom_mqtt_port.setValue(String(connectionSettings->mqttPort).c_str(), String(connectionSettings->mqttPort).length());
-	custom_mqtt_username.setValue(connectionSettings->mqttUsername.c_str(), connectionSettings->mqttUsername.length());
-	custom_mqtt_password.setValue(connectionSettings->mqttPassword.c_str(), connectionSettings->mqttPassword.length());
+	wifiManager.addParameter(&custom_http_host);
+	wifiManager.addParameter(&custom_coap_host);
+	custom_mqtt_broker.setValue(connectionSettings->mqttBroker.c_str(), 40);
+	custom_mqtt_port.setValue(String(connectionSettings->mqttPort).c_str(), 10);
+	custom_mqtt_username.setValue(connectionSettings->mqttUsername.c_str(), 40);
+	custom_mqtt_password.setValue(connectionSettings->mqttPassword.c_str(), 40);
+	custom_http_host.setValue(connectionSettings->httpHost.c_str(), 40);
+	custom_coap_host.setValue(connectionSettings->coapHost.c_str(), 40);
 	// Set dark theme for WiFiManager.
 	wifiManager.setClass("invert");
 	// Auto timeout after 5 minutes (300 seconds).

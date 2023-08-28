@@ -32,6 +32,8 @@ void connectionSettingsInit(ConnectionSettings *connSettings) {
 		connSettings->mqttPort = preferences.getUInt("mqttPort", 1883);
 		connSettings->mqttUsername = preferences.getString("mqttUsername", "");
 		connSettings->mqttPassword = preferences.getString("mqttPassword", "");
+		connSettings->httpHost = preferences.getString("httpHost", "");
+		connSettings->coapHost = preferences.getString("coapHost", "");
 		connSettings->connFailures = preferences.getUInt("connFailures", 0);
 		// Close the preferences.
 		preferences.end();
@@ -41,6 +43,8 @@ void connectionSettingsInit(ConnectionSettings *connSettings) {
 		logDebugf(MODULE_NAME, "MQTT Port: %d", connSettings->mqttPort);
 		logDebugf(MODULE_NAME, "MQTT Username: %s", connSettings->mqttUsername);
 		logDebugf(MODULE_NAME, "MQTT Password: %s", connSettings->mqttPassword);
+		logDebugf(MODULE_NAME, "HTTP Host: %s", connSettings->httpHost);
+		logDebugf(MODULE_NAME, "COAP Host: %s", connSettings->coapHost);
 		logDebugf(MODULE_NAME, "Connection failures: %d", connSettings->connFailures);		
 	} else logWarning(MODULE_NAME, "Connection settings not found");
 }
@@ -53,6 +57,8 @@ void connectionSettingsSave() {
 	preferences.putUInt("mqttPort", connSettingsRef->mqttPort);
 	preferences.putString("mqttUsername", connSettingsRef->mqttUsername);
 	preferences.putString("mqttPassword", connSettingsRef->mqttPassword);
+	preferences.putString("httpHost", connSettingsRef->httpHost);
+	preferences.putString("coapHost", connSettingsRef->coapHost);
 	preferences.putUInt("connFailures", connSettingsRef->connFailures);
 	// Close the preferences.
 	preferences.end();
@@ -62,6 +68,8 @@ void connectionSettingsSave() {
 	logDebugf(MODULE_NAME, "MQTT Port: %d", connSettingsRef->mqttPort);
 	logDebugf(MODULE_NAME, "MQTT Username: %s", connSettingsRef->mqttUsername);
 	logDebugf(MODULE_NAME, "MQTT Password: %s", connSettingsRef->mqttPassword);
+	logDebugf(MODULE_NAME, "HTTP Host: %s", connSettingsRef->httpHost);
+	logDebugf(MODULE_NAME, "COAP Host: %s", connSettingsRef->coapHost);
 	logDebugf(MODULE_NAME, "Connection failures: %d", connSettingsRef->connFailures);
 }
 

@@ -50,6 +50,8 @@ struct ConnectionSettings {
 	uint mqttPort;
 	String mqttUsername;
 	String mqttPassword;
+	String httpHost;
+	String coapHost;
 	uint connFailures;
 };
 
