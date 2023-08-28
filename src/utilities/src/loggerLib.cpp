@@ -28,10 +28,6 @@ void logMessage(const char* level, const char* module, const char *message, cons
 	Serial.printf("[%s] [%s] %s %s\n", level, module, message, value);
 }
 
-void logMessage(const char* level, const char* module, const char *message, String value) {
-	Serial.printf("[%s] [%s] %s %s\n", level, module, message, value);
-}
-
 void logMessage(const char* level, const char* module, const char *message, int value) {
 	Serial.printf("[%s] [%s] %s %d\n", level, module, message, value);
 }
@@ -49,7 +45,7 @@ void logInfo(const char *module, const char *message, const char* value) {
 }
 
 void logInfo(const char *module, const char *message, String value) {
-	logMessage(INFO, module, message, value);
+	logMessage(INFO, module, message, value.c_str());
 }
 
 void logInfo(const char *module, const char *message, int value) {
@@ -69,7 +65,7 @@ void logError(const char *module, const char *message, const char* value) {
 }
 
 void logError(const char *module, const char *message, String value) {
-	logMessage(ERROR, module, message, value);
+	logMessage(ERROR, module, message, value.c_str());
 }
 
 void logError(const char *module, const char *message, int value) {
@@ -89,7 +85,7 @@ void logWarning(const char *module, const char *message, const char* value) {
 }
 
 void logWarning(const char *module, const char *message, String value) {
-	logMessage(WARNING, module, message, value);
+	logMessage(WARNING, module, message, value.c_str());
 }
 
 void logWarning(const char *module, const char *message, int value) {
@@ -109,7 +105,7 @@ void logDebug(const char *module, const char *message, const char* value) {
 }
 
 void logDebug(const char *module, const char *message, String value) {
-	logMessage(DEBUG, module, message, value);
+	logMessage(DEBUG, module, message, value.c_str());
 }
 
 void logDebug(const char *module, const char *message, int value) {
