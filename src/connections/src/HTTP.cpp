@@ -21,11 +21,12 @@
 #define MODULE_NAME "HTTP"
 
 const char *httpAddress = NULL;
+ConnectionSettings *connSettingsRef2 = NULL;
 
 void httpSetServerAddress() {
 
 	// HTTP Server configuration
-	const char serverBaseAddress[] = "http://pi3aleben:5000/telemetry"; //TODO: Get this from settings
+	const char serverEndpoint[] = "telemetry";
 	const char group[] = "mobile-sensors";
 
 	if (httpAddress != NULL) {
@@ -33,14 +34,15 @@ void httpSetServerAddress() {
 		return;
 	}
 
-	// Address length: 31 (base) + 1 (separator) + group length + 1 (separator) + clientID length + 1 (null terminator)
-	int len = strlen(serverBaseAddress) + 1 + strlen(group) + 1 + getEsp32IDLen() + 1;
+	// Address length: 6 (http://) + httpHost + endpoint + 1 (separator) + group length + 1 (separator) + clientID length + 1 (null terminator)
+	int len = 6 + (connSettingsRef2->httpHost).length() + 1 + strlen(serverEndpoint) + 1 + strlen(group) + 1 + getEsp32IDLen() + 1;
 	char *addr = (char*) malloc(len * sizeof(char)); // Allocate memory for the address. This will last until the end of the program so it's ok (probably) to not free it
-	sprintf(addr, "%s/%s/%s", serverBaseAddress, group, getEsp32ID());
+	sprintf(addr, "http://%s/%s/%s/%s", connSettingsRef2->httpHost, serverEndpoint, group, getEsp32ID());
 	httpAddress = addr;
 }
 
-void httpSetup() {
+void httpSetup(ConnectionSettings *connSettingsRef) {
+	connSettingsRef2 = connSettingsRef;
 	httpSetServerAddress();
 	logInfo(MODULE_NAME, "HTTP client initialized");
 }

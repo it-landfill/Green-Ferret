@@ -35,7 +35,7 @@ void dataUploadSetup(Settings* settings, ConnectionSettings *connSettings) {
 	mqttConnect();
 
 	// Initialize HTTP client (but don't connect yet)
-	httpSetup();
+	httpSetup(connSettings);
 
 	// Busy waiting to receive config from mqtt
 	while (settings->protocol == NONE) {

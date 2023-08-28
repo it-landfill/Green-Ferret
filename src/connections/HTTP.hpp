@@ -11,12 +11,13 @@
 
 #ifndef HTTP_HPP
 #define HTTP_HPP
+#include "../memory/settings.hpp"
 
 /**
  * @brief Initialize the HTTP connection.
  * 
  */
-void httpSetup();
+void httpSetup(ConnectionSettings *connSettingsRef);
 
 /**
  * @brief Publish a message to the HTTP server in the sensor data topic.
