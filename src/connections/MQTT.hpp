@@ -37,7 +37,13 @@ bool mqttConnect();
  * @return false Publish failed
  */
 bool mqttPublishSensorData(char *payload);
-
+/**
+ * @brief Publish a message to the MQTT broker in the config request topic.
+ * 
+ * @return true Message published
+ * @return false Publish failed
+ */
+bool mqttRequestConfig();
 /**
  * @brief Loop wrapper function for the MQTT client.
  * 

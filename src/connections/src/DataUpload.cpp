@@ -38,9 +38,15 @@ void dataUploadSetup(Settings* settings, ConnectionSettings *connSettings) {
 	httpSetup(connSettings);
 
 	// Busy waiting to receive config from mqtt
+	int i = 0;
 	while (settings->protocol == NONE) {
 		mqttLoop();
 		logInfo(MODULE_NAME, "Waiting for config from MQTT...\tSleeping for 1 second.");
+		if (i++ >= 10) {
+			logInfo(MODULE_NAME, "Sending config request.");
+			mqttRequestConfig();
+			i = 0;
+		}
 		delay(1000);
 	}
 	// Initialize COAP client (but don't connect yet)
