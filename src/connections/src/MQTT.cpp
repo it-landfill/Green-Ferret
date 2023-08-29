@@ -25,6 +25,7 @@
 // MQTT Broker configuration
 const char *clientID = getEsp32ID();
 const char *sensorDataTopic;
+const char *configRequestTopic;
 
 // MQTT Client
 WiFiClient client;
@@ -117,6 +118,11 @@ void callback(char* topic, byte* payload, unsigned int length) {
 char* genConfigTopic() {
 	char *topic = new char[30];
 	sprintf(topic, "CFG/%s/Config", getEsp32ID());
+
+	char *configReqTop = new char[21];
+	sprintf(configReqTop, "CFG/%s/new", getEsp32ID());
+	configRequestTopic = configReqTop;
+
 	return topic;
 }
 
@@ -197,6 +203,20 @@ bool mqttPublishSensorData(char *payload) {
 	}
 
 	bool result = clientMQTT.publish(sensorDataTopic, payload);
+	return result;
+}
+
+bool mqttRequestConfig() {
+	// Connect to MQTT broker if not connected
+	if (!clientMQTT.connected()) mqttConnect();
+
+	// If still not connected, return false
+	if (!clientMQTT.connected()) {
+		logError(MODULE_NAME, "MQTT Broker not available");
+		return false;
+	}
+
+	bool result = clientMQTT.publish(configRequestTopic, "1");
 	return result;
 }
 
