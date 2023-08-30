@@ -13,7 +13,7 @@
 #ifndef BMP280_HPP
 #define BMP280_HPP
 
-#define DISABLE_BMP280
+// #define DISABLE_BMP280
 
 /**
  * @brief Setup BMP280 sensor.

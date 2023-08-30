@@ -103,7 +103,7 @@ void loop() {
 		int aqi = ens160GetAQI();
 		int tvoc = ens160GetTVOC();
 		int eco2 = ens160GetECO2();
-		char *jsonMsg = serializeSensorData(&temperature, &humidity, &temperature, &point.lat, &point.lon, &aqi, &tvoc, &eco2);
+		char *jsonMsg = serializeSensorData(&temperature, &humidity, &pressure, &point.lat, &point.lon, &aqi, &tvoc, &eco2);
 		// Update the last point with the new point.
 		if(settings.trigger == 0) updateGPSPoint();
 		else sendCounter++;
