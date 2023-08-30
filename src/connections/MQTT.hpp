@@ -44,6 +44,25 @@ bool mqttPublishSensorData(char *payload);
  * @return false Publish failed
  */
 bool mqttRequestConfig();
+
+/**
+ * @brief Publish a message to the MQTT broker in the error topic.
+ * 
+ * @param payload Message to publish
+ * @return true Message published
+ * @return false Publish failed 
+ */
+bool mqttSendError(const char *payload);
+
+/**
+ * @brief Publish a message to the MQTT broker in the warning topic.
+ * 
+ * @param payload Message to publish
+ * @return true Message published
+ * @return false Publish failed 
+ */
+bool mqttSendWarning(const char *payload);
+
 /**
  * @brief Loop wrapper function for the MQTT client.
  * 
@@ -51,4 +70,12 @@ bool mqttRequestConfig();
  * @return false 
  */
 bool mqttLoop();
+
+/**
+ * @brief Get the status of the MQTT client.
+ * 
+ * @return true 
+ * @return false 
+ */
+bool mqttGetStatus();
 #endif
