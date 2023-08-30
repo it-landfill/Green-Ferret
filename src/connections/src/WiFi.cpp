@@ -78,11 +78,10 @@ void wifiInit(ConnectionSettings *connectionSettings) {
 void wifiSetup(){
 	logInfo(MODULE_NAME, "Connecting to WiFi");
 	// If the connection fails 5 times, force WiFiManager.
-	if (connectionSettingsRef->connFailures > 5) {
+	if (rebootCountGet() > 5) {
 		logError(MODULE_NAME, "Board has failed to connect or has been rebooted 5 times. Forcing WiFiManager.");
 		// Reset connection failures counter and save the settings.
-		connectionSettingsRef->connFailures = 0;
-		connectionSettingsSave();
+		rebootCountSet(0);
 		// Start WiFiManager. If it fails, reboot.
 		if (!wifiManager.startConfigPortal(getEsp32ID(), AP_PW)) {
 			logError(MODULE_NAME, "Failed to connect and hit timeout. Restarting...");
@@ -99,8 +98,7 @@ void wifiSetup(){
 		logError(MODULE_NAME, "Failed to connect and hit timeout. Restarting...");
 		delay(3000);
 		ESP.restart();
-	} else connectionSettingsRef->connFailures = 0;
-	connectionSettingsSave();
+	} else rebootCountSet(0);
 
 	logInfo(MODULE_NAME, "WiFi connected. IP address:", WiFi.localIP().toString().c_str());
 }

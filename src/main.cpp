@@ -55,8 +55,8 @@ void setup(){
 
 	// Load settings from memory and save them.
 	connectionSettingsInit(&connSettings);
-	connSettings.connFailures += 1;
-	connectionSettingsSave();
+	rebootCountInit();
+	rebootCountIncrease();
 
 	#ifndef LOCAL_DEBUG
 		// Setup connections and data upload
