@@ -133,6 +133,7 @@ void rebootCountSet(ushort val) {
 
 	// Save the reboot count.
 	rebootCountSave();
+	logInfo(MODULE_NAME, "Reboot count set:", rebootCount);
 }
 
 void rebootCountErase() {
