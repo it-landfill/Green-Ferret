@@ -49,6 +49,7 @@ void httpSetup(ConnectionSettings *connSettingsRef) {
 }
 
 bool httpPublishSensorData(char *payload) {
+	logDebug(MODULE_NAME, "Publishing sensor data:", payload);
 	// Check WiFi connection
 	if (WiFi.status() != WL_CONNECTED) {
 		logError(MODULE_NAME, "WiFi not connected");
