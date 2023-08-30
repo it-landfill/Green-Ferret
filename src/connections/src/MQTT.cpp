@@ -134,7 +134,7 @@ void setSensorDataTopic() {
 	if (sensorDataTopic != NULL) return;
 
 	char *topic = new char[30];
-	sprintf(topic, "mobile-sensors/%sa", getEsp32ID());
+	sprintf(topic, "mobile-sensors/%s", getEsp32ID());
 	sensorDataTopic = topic;
 }
 
@@ -193,6 +193,7 @@ bool mqttConnect() {
 }
 
 bool mqttPublishSensorData(char *payload) {
+	logDebug(MODULE_NAME, "Publishing sensor data:", payload);
 	// Connect to MQTT broker if not connected
 	if (!clientMQTT.connected()) mqttConnect();
 
