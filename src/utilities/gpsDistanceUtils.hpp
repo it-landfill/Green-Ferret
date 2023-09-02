@@ -34,6 +34,6 @@ enum DistanceMethod {
  * @param p2 The second GPS point
  * @return float The distance between the two points in km
  */
-float getDistance(DistanceMethod method, struct gpsPoint p1, struct gpsPoint p2);
+float getDistance(DistanceMethod method, GpsPoint p1, GpsPoint p2);
 
 #endif
