@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <DFRobot_ENS160.h>
 
-#define DISABLE_ENS160
+// #define DISABLE_ENS160
 
 /**
  * @brief  Initial configuration for ENS160 sensor

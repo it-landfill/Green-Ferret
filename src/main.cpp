@@ -42,15 +42,15 @@ Settings settings = {
 // Counter for sent messages interval.
 int counter = 0;
 
-// Counter time 
+// Counter time
 unsigned long currentTime = 0;
 unsigned long sendCounter = 1;
 
-// Setup ESP32 
+// Setup ESP32
 void setup(){
 	// Init serial baud rate
 	Serial.begin(115200);
-	
+
 	logInfo("MAIN", "Starting Setup");
 
 	// Load settings from memory and save them.
@@ -59,15 +59,15 @@ void setup(){
 	rebootCountIncrease();
 
 	#ifndef LOCAL_DEBUG
-		// Setup connections and data upload
-		wifiInit(&connSettings);
-		wifiSetup();
-		dataUploadSetup(&settings, &connSettings);
+	// Setup connections and data upload
+	wifiInit(&connSettings);
+	wifiSetup();
+	dataUploadSetup(&settings, &connSettings);
 	#else
-		logWarning("MAIN", "Local Debug Enabled");
+	logWarning("MAIN", "Local Debug Enabled");
 	#endif
 
-	// Setup sensors. In order: 
+	// Setup sensors. In order:
 	// 1. AHT20
 	// 2. ENS160
 	// 3. BMP280
@@ -76,7 +76,7 @@ void setup(){
 	aht20Setup();
 	ens160Setup(aht20GetTemperature(), aht20GetHumidity());
 	bmp280Setup();
-	gpsSetup();
+	gpsSetup(); // TODO: Enable GPS
 
 	logInfo("MAIN", "Setup Complete");
 }
@@ -86,7 +86,7 @@ void loop() {
 	// Mantain the connection with the broker MQTT
 	dataUploadLoop();
 
-	// Update time 
+	// Update time
 	currentTime = millis();
 
 	// Get GPS data
@@ -99,11 +99,21 @@ void loop() {
 		float pressure = bmp280ReadPressure();
 		// Get humidity from AHT20
 		float humidity = aht20GetHumidity();
-		// Get AQI, TVOC and eCO2 from ENS160
-		int aqi = ens160GetAQI();
-		int tvoc = ens160GetTVOC();
-		int eco2 = ens160GetECO2();
-		char *jsonMsg = serializeSensorData(&temperature, &humidity, &pressure, &point.lat, &point.lon, &aqi, &tvoc, &eco2);
+
+		char *jsonMsg;
+
+		// Only publish air quality data if the sensor is ready and operational.
+		if (uint8_t ensStat = ens160GetStatus() == 0) {
+			// Get AQI, TVOC and eCO2 from ENS160
+			int aqi = ens160GetAQI();
+			int tvoc = ens160GetTVOC();
+			int eco2 = ens160GetECO2();
+			jsonMsg = serializeSensorData(&temperature, &humidity, &pressure, &point.lat, &point.lon, &aqi, &tvoc, &eco2);
+		} else {
+			logInfo("MAIN", "ENS160 not ready, code:", ensStat);
+			jsonMsg = serializeSensorData(&temperature, &humidity, &pressure, &point.lat, &point.lon, NULL, NULL, NULL);
+		}
+
 		// Update the last point with the new point.
 		if(settings.trigger == 0) updateGPSPoint();
 		else sendCounter++;
@@ -112,12 +122,12 @@ void loop() {
 			logInfo("MAIN", "Json to be pubblish:", jsonMsg);
 			// Publish the JSON message, if local debug is not enabled.
 			#ifndef LOCAL_DEBUG
-				publishSensorData(jsonMsg);
+			publishSensorData(jsonMsg);
 			#endif
 			// Free the JSON message
 			free(jsonMsg);
 		}
 	}
-	// TODO: Increase? Decrease? Delay? 
+	// TODO: Increase? Decrease? Delay?
 	delay(100);
 }

@@ -71,7 +71,8 @@ void setTempAndHum(float ambientTemp, float relativeHumidity) {
 
 uint8_t ens160GetStatus(){
 	#ifndef DISABLE_ENS160
-	return ENS160.getENS160Status();
+	uint8_t status = ENS160.getENS160Status();
+	return status;
 	#else
 	return 0;
 	#endif
