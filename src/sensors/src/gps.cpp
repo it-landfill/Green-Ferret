@@ -60,6 +60,7 @@ Serial.println();
 
 // GPS setup
 bool gpsSetup() {
+	#ifndef DISABLE_GPS
 	logDebug(MODULE_NAME, "Begin setup");
 
 	while (*gpsStream)
@@ -69,12 +70,16 @@ bool gpsSetup() {
 	logDebug(MODULE_NAME, "GPS initialized correctly");
 
 	logDebug(MODULE_NAME, "End setup");
+	#else
+	logWarning(MODULE_NAME, "GPS disabled");
+	#endif
 	return true;
 }
 
 
 // Get location
 bool getLocation() {
+	#ifndef DISABLE_GPS
 	// If there is a new location
 	if (gps.location.isValid()) {
 		// If the new location is different from the last one
@@ -86,6 +91,7 @@ bool getLocation() {
 			return true;
 		}
 	}
+	#endif
 	return false;
 }
 
