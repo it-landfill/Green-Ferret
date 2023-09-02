@@ -1,7 +1,7 @@
 #ifndef GPS_HPP
 #define GPS_HPP
 
-#define DISABLE_GPS
+// #define DISABLE_GPS
 
 #include "../utilities/dataGPSStruct.hpp"
 
@@ -12,29 +12,33 @@
  * @return false If the setup failed
  */
 bool gpsSetup();
+
 /**
- * @brief Get the current location
+ * @brief Get the Location object
  * 
- * @return true If the location was successfully retrieved
- * @return false If the location was not successfully retrieved
+ * @return GpsPoint or NULL if no point is available
  */
-bool getLocation();
+GpsPoint gpsGetLocation();
+
 /**
- * @brief Get the last location
+ * @brief Get the Last Point object
  * 
- * @return struct gpsPoint The last location
+ * @return GpsPoint or NULL if no point is available
  */
-struct gpsPoint getLastPoint();
-/**
- * @brief Get the new location
- * 
- * @return struct gpsPoint The new location
- */
-struct gpsPoint getNewPoint();
+GpsPoint gpsGetLastPoint();
+
 /**
  * @brief Update the GPS point
  * 
  */
-void updateGPSPoint();
+void gpsUpdateGPSPoint();
+
+/**
+ * @brief Loop function for the GPS module
+ * 
+ * Parse NMEA sentences and update the GPS point
+ * 
+ */
+void gpsLoop();	
 
 #endif
