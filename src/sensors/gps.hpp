@@ -1,8 +1,8 @@
 #ifndef GPS_HPP
 #define GPS_HPP
 
-#define DISABLE_GPS
-#define GPS_DEBUG
+// #define DISABLE_GPS
+// #define GPS_DEBUG
 
 #include "../utilities/dataGPSStruct.hpp"
 
