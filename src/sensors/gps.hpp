@@ -41,4 +41,9 @@ void gpsUpdateGPSPoint();
  */
 void gpsLoop();	
 
+/**
+ * @brief Wait for the GPS to align
+ * 
+ */
+void gpsWaitForAlignment();
 #endif

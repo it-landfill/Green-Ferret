@@ -79,7 +79,7 @@ void gpsLoop() {
 	while (Serial2.available() > 0) {
 		gps.encode(Serial2.read());
 		lastTime = millis();
-		lastWarning = lastTime;
+		lastWarning = millis();
 	}
 
 	// Non devo gestire rollover di millis() grazie al fatto che sono unsigned long
@@ -89,6 +89,16 @@ void gpsLoop() {
 		lastWarning = millis();
 	}
 	#endif
+}
+
+void gpsWaitForAlignment() {
+	logInfo(MODULE_NAME, "Waiting for GPS alignment");
+	while (gpsGetLocation() == NULL) {
+		gpsLoop();
+		Serial.print(".");
+		delay(1000);
+	}
+	logInfo(MODULE_NAME, "GPS aligned");
 }
 
 

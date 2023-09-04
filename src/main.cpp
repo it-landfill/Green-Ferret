@@ -77,6 +77,8 @@ void setup(){
 	ens160Setup(aht20GetTemperature(), aht20GetHumidity());
 	bmp280Setup();
 	gpsSetup();
+	gpsWaitForAlignment();
+	
 
 	logInfo("MAIN", "Setup Complete");
 }
