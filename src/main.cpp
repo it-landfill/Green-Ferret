@@ -78,7 +78,7 @@ void setup(){
 	bmp280Setup();
 	gpsSetup();
 	gpsWaitForAlignment();
-	
+
 
 	logInfo("MAIN", "Setup Complete");
 }
@@ -121,7 +121,7 @@ void loop() {
 				int eco2 = ens160GetECO2();
 				jsonMsg = serializeSensorData(&temperature, &humidity, &pressure, &(point->lat), &(point->lon), &aqi, &tvoc, &eco2);
 			} else {
-				logInfo("MAIN", "ENS160 not ready, code:", ensStat);
+				logDebug("MAIN", "ENS160 not ready, code:", ensStat);
 				jsonMsg = serializeSensorData(&temperature, &humidity, &pressure, &(point->lat), &(point->lon), NULL, NULL, NULL);
 			}
 

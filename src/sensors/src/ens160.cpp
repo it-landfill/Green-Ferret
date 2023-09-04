@@ -101,7 +101,7 @@ bool ens160Ping() {
 
 uint8_t ens160GetStatus(){
 	#ifndef DISABLE_ENS160
-	if (!ens160Ping()) return -1;
+	if (!ens160Ping()) return 0;
 	uint8_t status = ENS160.getENS160Status();
 	return status;
 	#else
@@ -111,7 +111,7 @@ uint8_t ens160GetStatus(){
 
 uint8_t ens160GetAQI(){
 	#ifndef DISABLE_ENS160
-	if (!ens160Ping()) return -1;
+	if (!ens160Ping()) return 0;
 	return ENS160.getAQI();
 	#else
 	return 0;
@@ -120,7 +120,7 @@ uint8_t ens160GetAQI(){
 
 uint16_t ens160GetTVOC(){
 	#ifndef DISABLE_ENS160
-	if (!ens160Ping()) return -1.1;
+	if (!ens160Ping()) return 0;
 	return ENS160.getTVOC();
 	#else
 	return 0;
@@ -129,7 +129,7 @@ uint16_t ens160GetTVOC(){
 
 uint16_t ens160GetECO2(){
 	#ifndef DISABLE_ENS160
-	if (!ens160Ping()) return -1.1;
+	if (!ens160Ping()) return 0;
 	return ENS160.getECO2();
 	#else
 	return 0;
