@@ -28,6 +28,30 @@ bool aht20Setup(){
 	return true;
 }
 
+/*
+   https://www.arduino.cc/reference/en/language/functions/communication/wire/endtransmission/
+   endTransmission() returns:
+   0: success.
+   1: data too long to fit in transmit buffer.
+   2: received NACK on transmit of address.
+   3: received NACK on transmit of data.
+   4: other error.
+   5: timeout
+ */
+bool aht20Ping() {
+	#ifndef DISABLE_AHT20
+	
+	// No error, nice
+	if (aht20.isConnected()) return true;
+
+	// Well... not so good, but could be worse
+	logError(MODULE_NAME, "Sensor not responding");
+	return false;
+	#else
+	return true;
+	#endif
+}
+
 void refreshMeasurement(){
 	#ifndef DISABLE_AHT20
 	if (millis()>lastMeasurement+MESAUREMENT_INTERVAL_MS) {
@@ -39,6 +63,7 @@ void refreshMeasurement(){
 
 float aht20GetTemperature(){
 	#ifndef DISABLE_AHT20
+	if (!aht20Ping()) return -1.1;
 	refreshMeasurement();
 	return aht20.getTemperature();
 	#else
@@ -48,6 +73,7 @@ float aht20GetTemperature(){
 
 float aht20GetHumidity(){
 	#ifndef DISABLE_AHT20
+	if (!aht20Ping()) return -1.1;
 	refreshMeasurement();
 	return aht20.getHumidity();
 	#else

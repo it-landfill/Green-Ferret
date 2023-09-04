@@ -4,11 +4,12 @@
 #include "../../utilities/loggerLib.hpp"
 
 #define MODULE_NAME "ENS160"
+#define ENS160_ADDRESS 0x53
 
 // Label used in ens160GetECO2Label()
 char label[10];
 
-DFRobot_ENS160_I2C ENS160(&Wire, /*I2CAddr*/ 0x53);
+DFRobot_ENS160_I2C ENS160(&Wire, /*I2CAddr*/ ENS160_ADDRESS);
 
 bool ens160Setup(float ambientTemp, float ambientHum, uint8_t mode) {
 	logDebug(MODULE_NAME,"Begin setup");
@@ -69,8 +70,34 @@ void setTempAndHum(float ambientTemp, float relativeHumidity) {
 	#endif
 }
 
+/*
+   https://www.arduino.cc/reference/en/language/functions/communication/wire/endtransmission/
+   endTransmission() returns:
+   0: success.
+   1: data too long to fit in transmit buffer.
+   2: received NACK on transmit of address.
+   3: received NACK on transmit of data.
+   4: other error.
+   5: timeout
+ */
+bool ens160Ping() {
+	#ifndef DISABLE_ENS160
+	Wire.beginTransmission(ENS160_ADDRESS);
+	byte error = Wire.endTransmission();
+	// No error, nice
+	if (error == 0) return true;
+
+	// Well... not so good, but could be worse
+	logError(MODULE_NAME, "Sensor not responding, ping returned:", String(error));
+	return false;
+	#else
+	return true;
+	#endif
+}
+
 uint8_t ens160GetStatus(){
 	#ifndef DISABLE_ENS160
+	if (!ens160Ping()) return -1;
 	uint8_t status = ENS160.getENS160Status();
 	return status;
 	#else
@@ -80,6 +107,7 @@ uint8_t ens160GetStatus(){
 
 uint8_t ens160GetAQI(){
 	#ifndef DISABLE_ENS160
+	if (!ens160Ping()) return -1;
 	return ENS160.getAQI();
 	#else
 	return 0;
@@ -88,6 +116,7 @@ uint8_t ens160GetAQI(){
 
 uint16_t ens160GetTVOC(){
 	#ifndef DISABLE_ENS160
+	if (!ens160Ping()) return -1.1;
 	return ENS160.getTVOC();
 	#else
 	return 0;
@@ -96,25 +125,9 @@ uint16_t ens160GetTVOC(){
 
 uint16_t ens160GetECO2(){
 	#ifndef DISABLE_ENS160
+	if (!ens160Ping()) return -1.1;
 	return ENS160.getECO2();
 	#else
 	return 0;
-	#endif
-}
-
-char* ens160GetECO2Label(){
-	#ifndef DISABLE_ENS160
-	uint16_t val = ens160GetECO2();
-
-	if (val>1500) strcpy(label, "Unhealthy");
-	else if (val>1000) strcpy(label, "Poor");
-	else if (val>800) strcpy(label, "Moderate");
-	else if (val>600) strcpy(label, "Good");
-	else strcpy(label, "Excelent");
-
-	return label; 
-	#else
-	strcpy(label, "Disabled");
-	return label;
 	#endif
 }
