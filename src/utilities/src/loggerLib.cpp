@@ -60,19 +60,19 @@ void logInfo(const char *module, const char *message, float value) {
 	logMessage(INFO, module, message, value);
 }
 
-void logError(const char *module, const char *message){
+void logError(const char *module, const char *message, bool send) {
 	logMessage(ERROR, module, message);
 	#ifndef LOCAL_DEBUG
-	if (mqttGetStatus()) {
+	if (send && mqttGetStatus()) {
 		mqttSendError(message);
 	}
 	#endif
 }
 
-void logError(const char *module, const char *message, const char* value) {
+void logError(const char *module, const char *message, const char* value, bool send) {
 	logMessage(ERROR, module, message, value);
 	#ifndef LOCAL_DEBUG
-	if (mqttGetStatus()) {
+	if (send && mqttGetStatus()) {
 		char *tmp = (char*) malloc((strlen(module) + strlen(message) + strlen(value) + 5)*sizeof(char));
 		sprintf(tmp, "[%s] %s %s\0", module, message, value);
 		mqttSendError(tmp);
@@ -80,10 +80,10 @@ void logError(const char *module, const char *message, const char* value) {
 	#endif
 }
 
-void logError(const char *module, const char *message, String value) {
+void logError(const char *module, const char *message, String value, bool send) {
 	logMessage(ERROR, module, message, value.c_str());
 	#ifndef LOCAL_DEBUG
-	if (mqttGetStatus()) {
+	if (send && mqttGetStatus()) {
 		char *tmp = (char*) malloc((strlen(module) + strlen(message) + value.length() + 5)*sizeof(char));
 		sprintf(tmp, "[%s] %s %s\0", module, message, value.c_str());
 		mqttSendError(tmp);
@@ -91,10 +91,10 @@ void logError(const char *module, const char *message, String value) {
 	#endif
 }
 
-void logError(const char *module, const char *message, int value) {
+void logError(const char *module, const char *message, int value, bool send) {
 	logMessage(ERROR, module, message, value);
 	#ifndef LOCAL_DEBUG
-	if (mqttGetStatus()) {
+	if (send && mqttGetStatus()) {
 		sprintf(tmpBuff, "%d\0", value);
 		char *tmp = (char*) malloc((strlen(module) + strlen(message) + strlen(tmpBuff) + 5)*sizeof(char));
 		sprintf(tmp, "[%s] %s %s\0", module, message, tmpBuff);
@@ -103,10 +103,10 @@ void logError(const char *module, const char *message, int value) {
 	#endif
 }
 
-void logError(const char *module, const char *message, float value) {
+void logError(const char *module, const char *message, float value, bool send) {
 	logMessage(ERROR, module, message, value);
 	#ifndef LOCAL_DEBUG
-	if (mqttGetStatus()) {
+	if (send && mqttGetStatus()) {
 		sprintf(tmpBuff, "%.2f\0", value);
 		char *tmp = (char*) malloc((strlen(module) + strlen(message) + strlen(tmpBuff) + 5)*sizeof(char));
 		sprintf(tmp, "[%s] %s %s\0", module, message, tmpBuff);
@@ -115,19 +115,19 @@ void logError(const char *module, const char *message, float value) {
 	#endif
 }
 
-void logWarning(const char *module, const char *message){
+void logWarning(const char *module, const char *message, bool send){
 	logMessage(WARNING, module, message);
 	#ifndef LOCAL_DEBUG
-	if (mqttGetStatus()) {
+	if (send && mqttGetStatus()) {
 		mqttSendWarning(message);
 	}
 	#endif
 }
 
-void logWarning(const char *module, const char *message, const char* value) {
+void logWarning(const char *module, const char *message, const char* value, bool send) {
 	logMessage(WARNING, module, message, value);
 	#ifndef LOCAL_DEBUG
-	if (mqttGetStatus()) {
+	if (send && mqttGetStatus()) {
 		char *tmp = (char*) malloc((strlen(module) + strlen(message) + strlen(value) + 5)*sizeof(char));
 		sprintf(tmp, "[%s] %s %s\0", module, message, value);
 		mqttSendWarning(tmp);
@@ -135,10 +135,10 @@ void logWarning(const char *module, const char *message, const char* value) {
 	#endif
 }
 
-void logWarning(const char *module, const char *message, String value) {
+void logWarning(const char *module, const char *message, String value, bool send) {
 	logMessage(WARNING, module, message, value.c_str());
 	#ifndef LOCAL_DEBUG
-	if (mqttGetStatus()) {
+	if (send && mqttGetStatus()) {
 		char *tmp = (char*) malloc((strlen(module) + strlen(message) + value.length() + 5)*sizeof(char));
 		sprintf(tmp, "[%s] %s %s\0", module, message, value.c_str());
 		mqttSendWarning(tmp);
@@ -146,10 +146,10 @@ void logWarning(const char *module, const char *message, String value) {
 	#endif
 }
 
-void logWarning(const char *module, const char *message, int value) {
+void logWarning(const char *module, const char *message, int value, bool send) {
 	logMessage(WARNING, module, message, value);
 	#ifndef LOCAL_DEBUG
-	if (mqttGetStatus()) {
+	if (send && mqttGetStatus()) {
 		sprintf(tmpBuff, "%.2f\0", value);
 		char *tmp = (char*) malloc((strlen(module) + strlen(message) + strlen(tmpBuff) + 5)*sizeof(char));
 		sprintf(tmp, "[%s] %s %s\0", module, message, tmpBuff);
@@ -158,10 +158,10 @@ void logWarning(const char *module, const char *message, int value) {
 	#endif
 }
 
-void logWarning(const char *module, const char *message, float value) {
+void logWarning(const char *module, const char *message, float value, bool send) {
 	logMessage(WARNING, module, message, value);
 	#ifndef LOCAL_DEBUG
-	if (mqttGetStatus()) {
+	if (send && mqttGetStatus()) {
 		sprintf(tmpBuff, "%.2f\0", value);
 		char *tmp = (char*) malloc((strlen(module) + strlen(message) + strlen(tmpBuff) + 5)*sizeof(char));
 		sprintf(tmp, "[%s] %s %s\0", module, message, tmpBuff);
