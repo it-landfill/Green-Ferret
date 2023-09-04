@@ -34,24 +34,24 @@ void displayInfo() {
 		Serial.print(gps.date.day());
 		Serial.print(F("/"));
 		Serial.print(gps.date.year());
-} else Serial.print(F("INVALID"));
+	} else Serial.print(F("INVALID"));
 
-Serial.print(F(" "));
-if (gps.time.isValid()) {
-	if (gps.time.hour() < 10) Serial.print(F("0"));
-	Serial.print(gps.time.hour());
-	Serial.print(F(":"));
-	if (gps.time.minute() < 10) Serial.print(F("0"));
-	Serial.print(gps.time.minute());
-	Serial.print(F(":"));
-	if (gps.time.second() < 10) Serial.print(F("0"));
-	Serial.print(gps.time.second());
-	Serial.print(F("."));
-	if (gps.time.centisecond() < 10) Serial.print(F("0"));
-	Serial.print(gps.time.centisecond());
-} else Serial.print(F("INVALID"));
+	Serial.print(F(" "));
+	if (gps.time.isValid()) {
+		if (gps.time.hour() < 10) Serial.print(F("0"));
+		Serial.print(gps.time.hour());
+		Serial.print(F(":"));
+		if (gps.time.minute() < 10) Serial.print(F("0"));
+		Serial.print(gps.time.minute());
+		Serial.print(F(":"));
+		if (gps.time.second() < 10) Serial.print(F("0"));
+		Serial.print(gps.time.second());
+		Serial.print(F("."));
+		if (gps.time.centisecond() < 10) Serial.print(F("0"));
+		Serial.print(gps.time.centisecond());
+	} else Serial.print(F("INVALID"));
 
-Serial.println();
+	Serial.println();
 }
 
 
@@ -81,6 +81,9 @@ void gpsLoop() {
 		lastTime = millis();
 		lastWarning = millis();
 	}
+	#ifdef GPS_DEBUG
+	displayInfo();
+	#endif
 
 	// Non devo gestire rollover di millis() grazie al fatto che sono unsigned long
 	if (millis() - lastWarning > GPStimeout) {
@@ -93,11 +96,15 @@ void gpsLoop() {
 
 void gpsWaitForAlignment() {
 	logInfo(MODULE_NAME, "Waiting for GPS alignment");
+	#ifndef DISABLE_GPS
 	while (gpsGetLocation() == NULL) {
 		gpsLoop();
+		#ifndef GPS_DEBUG
 		Serial.print(".");
+		#endif
 		delay(1000);
 	}
+	#endif
 	logInfo(MODULE_NAME, "GPS aligned");
 }
 
