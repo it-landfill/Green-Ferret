@@ -124,7 +124,7 @@ GpsPoint gpsGetLocation() {
 		}
 	}
 	#endif
-	return NULL;
+	return &newPoint;
 }
 
 // Return the last gps point
