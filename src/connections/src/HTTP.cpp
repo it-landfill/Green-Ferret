@@ -65,7 +65,6 @@ bool httpPublishSensorData(char *payload) {
 
 	if (responseCode == 200) {
 		// Request sent 
-		logDebug(MODULE_NAME, "Data upload successful");
 		http.end();
 		return true;
 	} else if (responseCode > 0) {

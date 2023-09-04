@@ -20,10 +20,10 @@
  * @param lon The longitude
  * @param timestamp The timestamp in epoch format
  */
-struct gpsPoint {
+typedef struct gpsPoint {
     float lat;
     float lon;
     long timestamp;
-};
+} * GpsPoint;
 
 #endif

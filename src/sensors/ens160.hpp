@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <DFRobot_ENS160.h>
 
-#define DISABLE_ENS160
+// #define DISABLE_ENS160
 
 /**
  * @brief  Initial configuration for ENS160 sensor
@@ -73,17 +73,5 @@ uint16_t ens160GetTVOC();
  * - Unhealthy(> 1500)
  */
 uint16_t ens160GetECO2();
-
-/**
- * @brief Get CO2 equivalent concentration calculated according to the detected data of VOCs and hydrogen (eCO2 – Equivalent CO2)
- *
- * @return char* The eCO2 (range: 400–65000 unit: ppm):
- * - Excellent(400 - 600)
- * - Good(600 - 800)
- * - Moderate(800 - 1000)
- * - Poor(1000 - 1500)
- * - Unhealthy(> 1500)
- */
-char* ens160GetECO2Label();
 
 #endif

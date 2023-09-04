@@ -27,6 +27,9 @@ const char *clientID = getEsp32ID();
 const char *sensorDataTopic;
 const char *configRequestTopic;
 
+const char *errorTopic;
+const char *warnTopic;
+
 // MQTT Client
 WiFiClient client;
 PubSubClient clientMQTT(client);
@@ -113,15 +116,27 @@ void callback(char* topic, byte* payload, unsigned int length) {
 /**
  * @brief Generate the configuration topic.
  *
- * @return char* The configuration topic
+ * @return char* The configuration topic (CFG/.../Config)
  */
-char* genConfigTopic() {
+char* genTopics() {
+	// ---- Config topic ----
 	char *topic = new char[30];
 	sprintf(topic, "CFG/%s/Config", getEsp32ID());
 
+	// ---- Config request topic ----
 	char *configReqTop = new char[21];
 	sprintf(configReqTop, "CFG/%s/new", getEsp32ID());
 	configRequestTopic = configReqTop;
+
+	// ---- Error topic ----
+	char *errorTop = new char[27];
+	sprintf(errorTop, "logging/%s/error", getEsp32ID());
+	errorTopic = errorTop;
+
+	// ---- Warning topic ----
+	char *warnTop = new char[28];
+	sprintf(warnTop, "logging/%s/warning", getEsp32ID());
+	warnTopic = warnTop;
 
 	return topic;
 }
@@ -180,7 +195,7 @@ bool mqttConnect() {
 		if (clientMQTT.connect(clientID, connSettingsRef1->mqttUsername.c_str(), connSettingsRef1->mqttPassword.c_str())) {
 			logDebug(MODULE_NAME, "Connected to MQTT broker");
 
-			char *topics[] = {genConfigTopic()};
+			char *topics[] = {genTopics()};
 			mqttSubscribe(topics);
 			return true;
 		}
@@ -221,8 +236,40 @@ bool mqttRequestConfig() {
 	return result;
 }
 
+bool mqttSendError(const char *payload) {
+	// Connect to MQTT broker if not connected
+	if (!clientMQTT.connected()) mqttConnect();
+
+	// If still not connected, return false
+	if (!clientMQTT.connected()) {
+		logError(MODULE_NAME, "MQTT Broker not available");
+		return false;
+	}
+
+	bool result = clientMQTT.publish(errorTopic, payload);
+	return result;
+}
+
+bool mqttSendWarning(const char *payload) {
+	// Connect to MQTT broker if not connected
+	if (!clientMQTT.connected()) mqttConnect();
+
+	// If still not connected, return false
+	if (!clientMQTT.connected()) {
+		logError(MODULE_NAME, "MQTT Broker not available");
+		return false;
+	}
+
+	bool result = clientMQTT.publish(warnTopic, payload);
+	return result;
+}
+
 bool mqttLoop() {
 	if (!clientMQTT.connected()) mqttConnect();
 	clientMQTT.loop();
+	return clientMQTT.connected();
+}
+
+bool mqttGetStatus() {
 	return clientMQTT.connected();
 }

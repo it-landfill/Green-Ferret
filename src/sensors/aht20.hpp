@@ -1,7 +1,7 @@
 #ifndef ATH20_HPP
 #define AHT20_HPP
 
-#define DISABLE_AHT20
+// #define DISABLE_AHT20
 
 /**
  * @brief Initializes sensor communication
