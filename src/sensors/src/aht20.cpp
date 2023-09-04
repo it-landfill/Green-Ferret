@@ -50,7 +50,7 @@ bool aht20Ping() {
 	}
 
 	// Well... not so good, but could be worse
-	logError(MODULE_NAME, "Sensor not responding", !ahtErrorNotified);
+	logError(MODULE_NAME, "Sensor not responding", "", !ahtErrorNotified);
 	ahtErrorNotified = true;
 	return false;
 	#else
