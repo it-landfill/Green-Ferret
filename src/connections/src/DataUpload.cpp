@@ -57,12 +57,7 @@ void dataUploadSetup(Settings* settings, ConnectionSettings *connSettings) {
 }
 
 bool dataUploadLoop() {
-	switch (sett->protocol) {
-		case MQTT:
-			return mqttLoop();
-		default:
-			return true;
-	}
+	return mqttLoop();
 }
 
 bool publishSensorData(char *payload){
