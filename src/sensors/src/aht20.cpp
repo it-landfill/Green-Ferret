@@ -9,6 +9,8 @@
 
 AHT20 aht20;
 unsigned long lastMeasurement = 0;
+// Notify AHT error only once
+bool ahtErrorNotified = false;
 
 bool aht20Setup(){
 	logDebug(MODULE_NAME,"Begin setup");
@@ -21,7 +23,7 @@ bool aht20Setup(){
 	#else
 	logWarning(MODULE_NAME, "AHT20 disabled");
 	#endif
-	
+
 	logDebug(MODULE_NAME, "Sensor initialized correctly");
 
 	logDebug(MODULE_NAME, "End setup");
@@ -40,12 +42,16 @@ bool aht20Setup(){
  */
 bool aht20Ping() {
 	#ifndef DISABLE_AHT20
-	
+
 	// No error, nice
-	if (aht20.isConnected()) return true;
+	if (aht20.isConnected()) {
+		ahtErrorNotified = false;
+		return true;
+	}
 
 	// Well... not so good, but could be worse
-	logError(MODULE_NAME, "Sensor not responding");
+	logError(MODULE_NAME, "Sensor not responding", !ahtErrorNotified);
+	ahtErrorNotified = true;
 	return false;
 	#else
 	return true;

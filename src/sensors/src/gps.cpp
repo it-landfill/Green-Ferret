@@ -19,6 +19,8 @@ struct gpsPoint newPoint = { 0, 0, 0 };
 unsigned long lastTime = 0;
 unsigned long lastWarning = 0;
 
+bool gpsErrorNotified = false;
+
 void displayInfo() {
 	Serial.print(F("Location: "));
 	if (gps.location.isValid()) {
@@ -80,6 +82,7 @@ void gpsLoop() {
 		gps.encode(Serial2.read());
 		lastTime = millis();
 		lastWarning = millis();
+		gpsErrorNotified = false;
 	}
 	#ifdef GPS_DEBUG
 	displayInfo();
@@ -87,9 +90,10 @@ void gpsLoop() {
 
 	// Non devo gestire rollover di millis() grazie al fatto che sono unsigned long
 	if (millis() - lastWarning > GPStimeout) {
-		logWarning(MODULE_NAME, "No GPS data received. Last message was (minutes ago): ", (int)((millis() - lastTime) / 60000));
+		logWarning(MODULE_NAME, "No GPS data received. Last message was (minutes ago): ", (int)((millis() - lastTime) / 60000), !gpsErrorNotified);
 		displayInfo();
 		lastWarning = millis();
+		gpsErrorNotified = true;
 	}
 	#endif
 }

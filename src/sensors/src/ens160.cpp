@@ -6,8 +6,8 @@
 #define MODULE_NAME "ENS160"
 #define ENS160_ADDRESS 0x53
 
-// Label used in ens160GetECO2Label()
-char label[10];
+// Notify ENS error only once
+bool ensErrorNotified = false;
 
 DFRobot_ENS160_I2C ENS160(&Wire, /*I2CAddr*/ ENS160_ADDRESS);
 
@@ -85,10 +85,14 @@ bool ens160Ping() {
 	Wire.beginTransmission(ENS160_ADDRESS);
 	byte error = Wire.endTransmission();
 	// No error, nice
-	if (error == 0) return true;
+	if (error == 0) {
+		ensErrorNotified = false;
+		return true;
+	}
 
 	// Well... not so good, but could be worse
-	logError(MODULE_NAME, "Sensor not responding, ping returned:", String(error));
+	logError(MODULE_NAME, "Sensor not responding, ping returned:", String(error), !ensErrorNotified);
+	ensErrorNotified = true;
 	return false;
 	#else
 	return true;

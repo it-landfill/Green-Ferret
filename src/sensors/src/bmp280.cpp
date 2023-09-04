@@ -26,6 +26,9 @@ Adafruit_BMP280 bmp;
 #endif
 #define BMP280_CHIPID 0x58
 
+// Notify BMP error only once
+bool bmpErrorNotified = false;
+
 bool bmp280Setup() {
 	#ifndef DISABLE_BMP280
 	logDebug(MODULE_NAME, "Begin setup");
@@ -45,7 +48,7 @@ bool bmp280Setup() {
 
 
 /*
-	https://cdn-shop.adafruit.com/datasheets/BST-BMP280-DS001-11.pdf (page 25)
+        https://cdn-shop.adafruit.com/datasheets/BST-BMP280-DS001-11.pdf (page 25)
 
    https://www.arduino.cc/reference/en/language/functions/communication/wire/endtransmission/
    endTransmission() returns:
@@ -61,10 +64,14 @@ bool bmp280Ping() {
 	Wire.beginTransmission(BMP280_ADDRESS_ALT);
 	byte error = Wire.endTransmission();
 	// No error, nice
-	if (error == 0) return true;
+	if (error == 0) {
+		bmpErrorNotified = false;
+		return true;
+	}
 
 	// Well... not so good, but could be worse
-	logError(MODULE_NAME, "Sensor not responding, ping returned:", String(error));
+	logError(MODULE_NAME, "Sensor not responding, ping returned:", String(error), !bmpErrorNotified);
+	bmpErrorNotified = true;
 	return false;
 	#else
 	return true;
