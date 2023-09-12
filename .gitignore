@@ -5,3 +5,5 @@
 .vscode/ipch
 .DS_Store
 .vscode
+/src/connections/secrets.hpp
+/Green-Schematics/Green-Schematics-backups
