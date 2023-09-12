@@ -126,7 +126,7 @@ GpsPoint gpsGetLocation() {
 			newPoint.timestamp = gps.time.value();
 			return &newPoint;
 		}
-	}
+	} else return NULL;
 	#endif
 	return &newPoint;
 }
